@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EASYMECH</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #f0f0f0;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary);
+            color: var(--primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            color: black;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between; /* Space between title and icon */
+            text-align: left;
+            z-index: 1001;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header-title {
+            font-weight: 500;
+            font-size: 1.4rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            margin-left: 20px; 
+            transform: translateX(-12px); /* Visual correction to center */
+        }
+
+        .location-icon {
+            font-size: 1.5rem;
+            cursor: pointer ;
+            margin-left: auto; /* Pushes to right */
+        }
+
+        /* Controls Bar */
+        .controls {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background:var(--secondary);
+            z-index: 1000;
+        }
+
+        .btn-filter {
+            width: 100%;   
+            padding: 12px;
+            background:white;
+            color: black;
+            border: none;
+            border-radius:10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        .btn-filter:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            background:white;
+            color: black;
+            border: 1px solid black;
+            border-radius: 12px;
+            padding: 8px 16px;
+            cursor: pointer;
+           
+        }
+
+        /* Map Area */
+        #map {
+            flex-grow: 1;
+            align-self: center;
+            width: 95%;
+            background: white;
+             border-radius: 10px;
+        }
+
+        /* Handyman List (Bottom Sheet style) */
+        .handyman-list {
+            height: 25vh;
+            overflow-y: auto;
+            background: var(--secondary);
+            border-top: 1px solid #ccc ;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Handyman Card */
+        .card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 12px; 
+            object-fit: cover;
+            background: #eee;
+            margin-right: 15px;
+            border: 1px solid #ddd;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+        }
+        .badge-open { background-color: var(--success); }
+        .badge-closed { background-color: var(--danger); }
+
+        /* Modal for Categories */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Map Popup Styling */
+        .leaflet-popup-content-wrapper { border-radius: 8px; padding: 5; height:100px; width:200px;}
+        .leaflet-popup-content { margin: 10px; text-align: center; }
+        .popup-btn {
+            display: block;
+            background:black;
+            color: white;
+            text-decoration: none;
+            padding: 8px 10px;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+        
+        /* Loading Spinner */
+        #loading {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-weight: bold; font-size: 1.2rem;
+            background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;
+            z-index: 3000; box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loading">Loading Handymen...</div>
+
+    <header>
+        <span class="header-title" onclick="resetMap()">EASYMECH</span>
+        <span class="location-icon" onclick="getUserLocation()">📍</span>
+    </header>
+
+    <div class="controls">
+        <button class="btn-filter" onclick="openModal()">All Services</button>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="handyman-list" id="list-container">
+        <!-- Cards injected here -->
+    </div>
+
+    <!-- Category Modal -->
+    <div id="cat-modal" class="modal">
+        <div class="modal-content">
+            <h3>Select Service</h3>
+            <div class="cat-grid" id="cat-grid"></div>
+            <button class="btn-outline" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+    
+    <script>
+        // --- CONFIG ---
+        const SHEET_ID = '1YRnpw6GJ8c2pZMYTofrYYLJBweWkR1qWvjmucI5_-k8';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        
+        let map;
+        let allData = [];
+        let markers = L.layerGroup();
+        let userLat = null;
+        let userLng = null;
+        let userMarker = null;
+
+        // --- INIT ---
+        window.onload = function() {
+            initMap();
+            fetchData();
+        };
+
+        function initMap() {
+            // Default center: Accra
+            map = L.map('map').setView([5.6037, -0.1870], 13);
+
+            // Esri Satellite
+            L.esri.basemapLayer('Imagery').addTo(map);
+            L.esri.basemapLayer('ImageryLabels').addTo(map);
+
+            markers.addTo(map);
+        }
+
+        // --- DATA FETCHING ---
+        async function fetchData() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const txt = await res.text();
+                // Strip Google's callback wrapper
+                const jsonString = txt.substring(47).slice(0, -2);
+                const json = JSON.parse(jsonString);
+                
+                // Parse rows
+                allData = json.table.rows.map(row => {
+                    const c = row.c;
+                    const v = (idx) => (c[idx] && c[idx].v) ? c[idx].v : null;
+                    
+                    return {
+                        name: v(0),
+                        image: v(1),
+                        type: v(2),
+                        open: v(3) || 8,
+                        close: v(4) || 17,
+                        region: v(5),
+                        town: v(6),
+                        contact: v(7),
+                        whatsapp: v(8),
+                        desc: v(9),
+                        lat: v(10),
+                        lng: v(11),
+                        id: btoa((v(0) || "") + (v(6) || "")).replace(/=/g, '')
+                    };
+                }).filter(item => item.lat && item.lng);
+
+                document.getElementById('loading').style.display = 'none';
+                renderApp(allData);
+                populateCategories();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerText = "Error loading data.";
+            }
+        }
+
+        // --- RENDERING ---
+        function renderApp(data) {
+            markers.clearLayers();
+            const container = document.getElementById('list-container');
+            container.innerHTML = '';
+
+            // 1. Sort by distance if user location is known
+            if (userLat && userLng) {
+                data.forEach(item => {
+                    item.distance = getDistance(userLat, userLng, item.lat, item.lng);
+                });
+                data.sort((a, b) => a.distance - b.distance);
+            }
+
+            // 2. Limit list
+            const displayList = data.slice(0, 10); 
+
+            if(displayList.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px;">No handymen found.</div>';
+                return;
+            }
+
+            displayList.forEach(item => {
+                // Add Marker
+                const marker = L.marker([item.lat, item.lng]).addTo(markers);
+                marker.bindPopup(`
+                    <b>${item.name}</b><br>
+                    <small>${item.type}</small><br>
+                    <a href="item.html?id=${item.id}" class="popup-btn">REQUEST</a>
+                `);
+
+                // Add List Card
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => {
+                    map.setView([item.lat, item.lng], 16);
+                    marker.openPopup();
+                };
+
+                const isOpen = isShopOpen(item.open, item.close);
+                const badgeHtml = isOpen 
+                    ? `<span class="badge badge-open">Open</span>` 
+                    : `<span class="badge badge-closed">Closed</span>`;
+                
+                const distText = item.distance ? ` • <b>${item.distance.toFixed(1)} km</b>` : '';
+
+                card.innerHTML = `
+                    <img src="${item.image || 'https://via.placeholder.com/70'}" class="card-img" onerror="this.src='https://via.placeholder.com/70'">
+                    <div class="card-info">
+                        <div class="card-name">${item.name}</div>
+                        <div class="card-meta">${item.type} • ${item.town}</div>
+                        <div class="card-meta">${badgeHtml} ${distText}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- CATEGORIES ---
+        function populateCategories() {
+            const types = [...new Set(allData.map(d => d.type))];
+            const grid = document.getElementById('cat-grid');
+            grid.innerHTML = `<button class="btn-outline" onclick="filterData(null)">All</button>`;
+            
+            types.forEach(type => {
+                if(type) {
+                    grid.innerHTML += `<button class="btn-outline" onclick="filterData('${type}')">${type}</button>`;
+                }
+            });
+        }
+
+        function filterData(type) {
+            closeModal();
+            if(!type) {
+                renderApp(allData);
+                map.setView([5.6037, -0.1870], 12); 
+            } else {
+                const filtered = allData.filter(d => d.type === type);
+                renderApp(filtered);
+                if(filtered.length > 0) {
+                    const bounds = L.latLngBounds(filtered.map(d => [d.lat, d.lng]));
+                    map.fitBounds(bounds, {padding: [50,50]});
+                }
+            }
+        }
+
+        // --- UTILS ---
+        function isShopOpen(open, close) {
+            const h = new Date().getHours();
+            return h >= open && h < close;
+        }
+
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2-lat1) * Math.PI/180;
+            const dLon = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // --- INTERACTION ---
+        function openModal() { document.getElementById('cat-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('cat-modal').style.display = 'none'; }
+        
+        function resetMap() {
+            renderApp(allData);
+            map.setView([5.6037, -0.1870], 13);
+        }
+
+        function getUserLocation() {
+            if(!navigator.geolocation) {
+                alert("Geolocation not supported.");
+                return;
+            }
+            // Show simple loading feedback
+            const icon = document.querySelector('.location-icon');
+            icon.innerText = "⏳";
+            
+            navigator.geolocation.getCurrentPosition(pos => {
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+                icon.innerText = "📍"; // Reset icon
+
+                map.setView([userLat, userLng], 15);
+
+                if(userMarker) map.removeLayer(userMarker);
+                userMarker = L.circleMarker([userLat, userLng], {
+                    color: 'white', fillColor: '#2196F3', fillOpacity: 1, radius: 8, weight: 2
+                }).addTo(map).bindPopup("You").openPopup();
+
+                renderApp(allData);
+            }, (err) => {
+                icon.innerText = "📍";
+                alert("Unable to retrieve location: " + err.message);
+            });
+        }
+    </script>
+</body>
+</html>

@@ -165,7 +165,7 @@
         .handyman-list-content {
             padding: 15px;
             overflow-y: auto;
-            /* CRITICAL FIX: Flex-grow makes this element fill the remaining space of the 80vh sheet height */
+            /* CRITICAL: Flex-grow makes this element fill the remaining space of the 80vh sheet height */
             flex-grow: 1;
             -webkit-overflow-scrolling: touch; 
         }
@@ -176,6 +176,8 @@
             display: flex;
             align-items: center;
             padding: 15px;
+            /* Added padding-right to accommodate the Request button */
+            padding-right: 110px; 
             border: 1px solid #eee;
             margin-bottom: 10px;
             border-radius: 12px; 
@@ -183,6 +185,7 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             cursor: pointer;
             transition: transform 0.2s;
+            position: relative; /* CRITICAL for positioning the button */
         }
 
         .card:active {
@@ -225,6 +228,28 @@
         }
         .badge-open { background-color: var(--success); }
         .badge-closed { background-color: var(--danger); }
+
+        /* NEW: Request Button Style */
+        .request-btn {
+            position: absolute;
+            bottom: 15px; 
+            right: 15px; 
+            padding: 8px 15px;
+            background: var(--primary); /* Black color */
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10;
+            white-space: nowrap;
+        }
+        
+        .request-btn:active {
+            transform: scale(0.95);
+        }
 
         /* Modal for Categories */
         .modal {
@@ -375,6 +400,9 @@
         let userLat = null;
         let userLng = null;
         let userMarker = null;
+        
+        // Map to store Leaflet marker instances by handyman ID
+        let markerMap = {}; 
 
         // --- SHEET STATE ---
         let isSheetExpanded = false;
@@ -440,6 +468,8 @@
         // --- RENDERING ---
         function renderApp(data) {
             markers.clearLayers();
+            markerMap = {}; // Clear the map of markers
+            
             const container = document.getElementById('list-container');
             container.innerHTML = '';
             
@@ -468,19 +498,37 @@
                 marker.bindPopup(`
                     <b>${item.name}</b><br>
                     <small>${item.type}</small><br>
-                    <a href="item.html?id=${item.id}" class="popup-btn">VIEW PROFILE</a>
+                    <!-- Leaflet popup content updated to match button style -->
+                    <a href="item.html?id=${item.id}" class="popup-btn">REQUEST SERVICE</a>
                 `);
+                
+                // Store marker reference in the map
+                markerMap[item.id] = marker; 
 
                 // Add List Card
                 const card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => {
-                    // When clicking a card, center the map and open the marker popup
-                    map.setView([item.lat, item.lng], 16);
-                    marker.openPopup();
-                    // Minimize sheet when focusing on a marker
-                    if(isSheetExpanded) toggleSheet();
-                };
+                
+                // Card click handler: Focuses map and opens marker popup
+                card.onclick = (function(handymanId, itemLat, itemLng) {
+                    return (event) => {
+                        // Prevent map focusing if the Request button was clicked (it handles navigation)
+                        if (event.target.classList.contains('request-btn')) {
+                            return; 
+                        }
+                        
+                        const targetMarker = markerMap[handymanId];
+                        if (targetMarker) {
+                            // 1. Center map on marker using flyTo for smooth transition (0.5s)
+                            map.flyTo([itemLat, itemLng], 16, {duration: 0.5}); 
+                            // 2. Open the popup
+                            targetMarker.openPopup();
+                            // 3. Minimize sheet when focusing on a marker
+                            if(isSheetExpanded) toggleSheet();
+                        }
+                    };
+                })(item.id, item.lat, item.lng);
+
 
                 const isOpen = isShopOpen(item.open, item.close);
                 const badgeHtml = isOpen 
@@ -496,11 +544,13 @@
                         <div class="card-meta">${item.type} • ${item.town}</div>
                         <div class="card-meta">${badgeHtml} ${distText}</div>
                     </div>
+                    <!-- NEW: Request button for direct navigation -->
+                    <a href="item.html?id=${item.id}" class="request-btn">Request</a>
                 `;
                 container.appendChild(card);
             });
             
-            // Add a final spacer for consistency, though flex-grow should handle the height now
+            // Add a final spacer for consistency
             container.innerHTML += '<div style="height: 15px;"></div>';
         }
 
@@ -617,7 +667,8 @@
                 let errorMsg;
                 switch (err.code) {
                     case err.PERMISSION_DENIED:
-                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. If on mobile, access must be over HTTPS.";
+                        // Added specific instruction for mobile access
+                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. NOTE: Access must be over HTTPS on most devices.";
                         break;
                     case err.POSITION_UNAVAILABLE:
                         errorMsg = "Location information is unavailable. Check your device's GPS signal.";
@@ -630,6 +681,11 @@
                         break;
                 }
                 showMessage(errorMsg, 8000, 'error');
+            }, { 
+                // CRUCIAL FOR MOBILE ACCURACY AND RELIABILITY
+                enableHighAccuracy: true, 
+                timeout: 10000, 
+                maximumAge: 0 
             });
         }
         
@@ -644,7 +700,11 @@
             }, 400); // Should be slightly longer than CSS transition time
             
             const listHeaderText = document.getElementById('list-header-text');
-            const count = document.getElementById('list-container').children.length;
+            const listContainer = document.getElementById('list-container');
+            // Get actual number of handyman cards (excluding placeholder/spacer)
+            const count = listContainer.children.length > 0 && listContainer.children[0].className === 'card' 
+                ? Array.from(listContainer.children).filter(c => c.className === 'card').length
+                : 0;
 
             if(isSheetExpanded) {
                 listHeaderText.innerText = `Handymen Near You (${count} found) - Tap to Minimize`;

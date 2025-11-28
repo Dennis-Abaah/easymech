@@ -18,6 +18,7 @@
             --success: #28a745;
             --danger: #dc3545;
             --warning: #FFD700;
+            --info: #007bff; /* Added for message boxes */
         }
 
         body {
@@ -105,8 +106,8 @@
             align-self: center;
             width: 100%; /* Use 100% width for full mobile screen */
             background: white;
-            border-radius: 0; /* Remove map border radius as sheet is fixed at bottom */
-            position: relative; /* Needed to respect body flex height */
+            border-radius: 0; 
+            position: relative; 
         }
         
         /* --- SLIDE-UP BOTTOM SHEET STYLES (Uber-like) --- */
@@ -120,16 +121,18 @@
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
-            transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); /* Snappy transition */
-            max-height: 90vh; /* Limit max height for header/controls */
-            /* Minified state: shows only the top 70px */
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); 
+            max-height: 90vh; 
+            
+            /* Minimized state: shows only the top 70px */
             transform: translateY(calc(100% - 70px)); 
             display: flex;
             flex-direction: column;
         }
 
+        /* Expanded state: now only 80% of the viewport height (100vh - 80vh = 20vh remaining from top) */
         .handyman-sheet.expanded {
-            transform: translateY(0); /* Expanded state: full height */
+            transform: translateY(calc(100vh - 80vh)); /* Moves the sheet up 80% */
         }
 
         .sheet-header {
@@ -139,7 +142,7 @@
             align-items: center;
             cursor: pointer;
             border-bottom: 1px solid #eee;
-            touch-action: pan-y; /* Optimize for touch drag */
+            touch-action: pan-y; 
         }
 
         .sheet-handle {
@@ -159,7 +162,7 @@
             padding: 15px;
             overflow-y: auto;
             flex-grow: 1;
-            -webkit-overflow-scrolling: touch; /* Enable smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch; 
         }
         /* --- END SLIDE-UP STYLES --- */
 
@@ -170,7 +173,7 @@
             padding: 15px;
             border: 1px solid #eee;
             margin-bottom: 10px;
-            border-radius: 12px; /* Smoother rounded corners */
+            border-radius: 12px; 
             background: white;
             box-shadow: 0 1px 3px rgba(0,0,0,0.08);
             cursor: pointer;
@@ -274,9 +277,9 @@
             position: fixed;
             top: 60px; /* Below header */
             left: 50%;
-            transform: translateX(-50%) translateY(-100px); /* Start slightly above viewport */
-            background: var(--warning); 
-            color: #333;
+            transform: translateX(-50%) translateY(-100px); 
+            background: var(--info); /* Changed default color to info blue */
+            color: white;
             padding: 10px 20px;
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.2);
@@ -289,11 +292,19 @@
             font-size: 0.9rem;
             font-weight: 500;
         }
+        #message-box.error {
+            background: var(--danger);
+        }
+        #message-box.warning {
+            background: var(--warning);
+            color: #333;
+        }
+
 
         #message-box.show {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(0); /* Slide down */
+            transform: translateX(-50%) translateY(0); 
         }
 
     </style>
@@ -323,7 +334,7 @@
     <!-- Slide-Up Bottom Sheet -->
     <div class="handyman-sheet" id="sheet-container">
         <div class="sheet-header" onclick="toggleSheet()">
-            <!-- Handle removed from center to accommodate text better, but kept handle styling for visibility -->
+            <!-- Handle kept for visual aesthetic -->
             <div class="sheet-handle"></div>
             <span class="list-title" id="list-header-text">Handymen Near You (Tap to Expand)</span>
         </div>
@@ -350,6 +361,10 @@
         const SHEET_ID = '1YRnpw6GJ8c2pZMYTofrYYLJBweWkR1qWvjmucI5_-k8';
         const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
         
+        // Default center: Accra, Ghana
+        const DEFAULT_CENTER = [5.6037, -0.1870]; 
+        const DEFAULT_ZOOM = 13;
+
         let map;
         let allData = [];
         let markers = L.layerGroup();
@@ -367,8 +382,7 @@
         };
 
         function initMap() {
-            // Default center: Accra
-            map = L.map('map').setView([5.6037, -0.1870], 13);
+            map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM);
 
             // Esri Satellite
             L.esri.basemapLayer('Imagery').addTo(map);
@@ -438,7 +452,7 @@
             }
 
             if(data.length === 0) {
-                container.innerHTML = '<div style="text-align:center; padding:20px;">No handymen found. Try checking a different service category.</div>';
+                container.innerHTML = '<div style="text-align:center; padding:20px; color: var(--danger); font-weight:600;">No handymen found. Try checking a different service category.</div>';
                 return;
             }
 
@@ -458,6 +472,8 @@
                     // When clicking a card, center the map and open the marker popup
                     map.setView([item.lat, item.lng], 16);
                     marker.openPopup();
+                    // Minimize sheet when focusing on a marker
+                    if(isSheetExpanded) toggleSheet();
                 };
 
                 const isOpen = isShopOpen(item.open, item.close);
@@ -497,18 +513,17 @@
             if(!type) {
                 renderApp(allData);
                 filterButton.innerText = 'All Services';
-                map.setView([5.6037, -0.1870], 12); 
+                map.setView(DEFAULT_CENTER, DEFAULT_ZOOM); 
             } else {
                 const filtered = allData.filter(d => d.type === type);
                 renderApp(filtered);
                 filterButton.innerText = type;
 
                 if(filtered.length > 0) {
-                    // Zoom map to bounds of filtered results
                     const bounds = L.latLngBounds(filtered.map(d => [d.lat, d.lng]));
-                    map.fitBounds(bounds, {padding: [50, 50, 100, 50]}); // Added padding to avoid sheet overlay
+                    map.fitBounds(bounds, {padding: [50, 50, 100, 50]}); 
                 } else {
-                    showMessage(`No ${type} services found in the current area.`, 4000);
+                    showMessage(`No ${type} services found in the current area.`, 4000, 'warning');
                 }
             }
         }
@@ -535,20 +550,25 @@
         function closeModal() { document.getElementById('cat-modal').style.display = 'none'; }
         
         function resetMap() {
+            // Reset location, filter, and sheet state
+            userLat = null;
+            userLng = null;
+            if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+            document.querySelector('.btn-filter').innerText = 'All Services';
+            
             renderApp(allData);
-            map.setView([5.6037, -0.1870], 13);
+            map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+            if(isSheetExpanded) toggleSheet(); // Collapse the sheet if it's open
         }
         
         // Custom message display function
-        function showMessage(text, duration = 3000) {
+        function showMessage(text, duration = 3000, type = 'info') {
             const msgBox = document.getElementById('message-box');
-            // Clear any existing timeout before setting new text
             clearTimeout(window.msgTimer); 
             
+            msgBox.className = `show ${type}`; // Apply type class
             msgBox.innerText = text;
-            msgBox.classList.add('show');
             
-            // Auto-hide
             window.msgTimer = setTimeout(() => {
                 msgBox.classList.remove('show');
             }, duration);
@@ -556,16 +576,23 @@
 
         function getUserLocation() {
             if(!navigator.geolocation) {
-                showMessage("Geolocation is not supported by this browser.", 5000);
+                showMessage("Geolocation is not supported by this browser.", 5000, 'error');
                 return;
             }
             
-            // Show simple loading feedback on the icon (using SVG rotation for effect)
             const iconSvg = document.querySelector('.location-icon svg');
             iconSvg.style.transition = 'transform 1s linear';
             iconSvg.style.transform = 'rotate(360deg)';
             
+            // Geolocation options for better performance/accuracy
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 5000, // 5 seconds max wait
+                maximumAge: 0 // No cached position
+            };
+
             navigator.geolocation.getCurrentPosition(pos => {
+                // SUCCESS
                 userLat = pos.coords.latitude;
                 userLng = pos.coords.longitude;
                 iconSvg.style.transform = 'rotate(0deg)'; // Reset icon
@@ -573,35 +600,35 @@
                 map.setView([userLat, userLng], 15);
 
                 if(userMarker) map.removeLayer(userMarker);
-                // Custom user marker
                 userMarker = L.circleMarker([userLat, userLng], {
                     color: '#2196F3', fillColor: '#2196F3', fillOpacity: 0.8, radius: 8, weight: 1
                 }).addTo(map).bindPopup("Your Location").openPopup();
 
-                showMessage("Location found! Listing handymen near you.", 3000);
+                showMessage("Location found! Listing handymen near you.", 3000, 'success');
                 renderApp(allData); // Re-render to sort by distance
 
             }, (err) => {
+                // ERROR
                 iconSvg.style.transform = 'rotate(0deg)'; // Reset icon
                 
                 let errorMsg;
                 switch (err.code) {
                     case err.PERMISSION_DENIED:
-                        // Specific instruction for denial on mobile
-                        errorMsg = "Location access denied. Please manually check your phone's app permissions for this site/browser to enable location services.";
+                        // Crucial advice for mobile/iframe environments
+                        errorMsg = "Location access denied (Error 1). Please ensure you are viewing this page over HTTPS and manually check your device's browser permissions for this site to grant access.";
                         break;
                     case err.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable. Check your device's GPS signal.";
+                        errorMsg = "Location information is unavailable (Error 2). Check your device's GPS/network connection.";
                         break;
                     case err.TIMEOUT:
-                        errorMsg = "Request to get user location timed out. Try again.";
+                        errorMsg = "Request to get user location timed out (Error 3). Try moving to an open area and clicking again.";
                         break;
                     default:
-                        errorMsg = `An unknown error occurred while retrieving location (Error Code: ${err.code}).`;
+                        errorMsg = `An unknown error occurred while retrieving location (Error ${err.code}).`;
                         break;
                 }
-                showMessage(errorMsg, 8000);
-            });
+                showMessage(errorMsg, 8000, 'error');
+            }, options); // Pass options here
         }
         
         function toggleSheet() {
@@ -609,13 +636,13 @@
             isSheetExpanded = !isSheetExpanded;
             sheet.classList.toggle('expanded', isSheetExpanded);
             
-            const headerText = document.getElementById('list-header-text');
+            const listHeaderText = document.getElementById('list-header-text');
             const count = document.getElementById('list-container').children.length;
 
             if(isSheetExpanded) {
-                headerText.innerText = `Handymen Near You (${count} found) - Tap to Minimize`;
+                listHeaderText.innerText = `Handymen Near You (${count} found) - Tap to Minimize`;
             } else {
-                headerText.innerText = `Handymen Near You (${count} found) - Tap to Expand`;
+                listHeaderText.innerText = `Handymen Near You (${count} found) - Tap to Expand`;
             }
         }
     </script>

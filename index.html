@@ -136,6 +136,7 @@
             padding: 15px 20px;
             display: flex;
             justify-content: center;
+            align-items: center;
             cursor: pointer;
             border-bottom: 1px solid #eee;
             touch-action: pan-y; /* Optimize for touch drag */
@@ -146,12 +147,12 @@
             height: 5px;
             background: #ccc;
             border-radius: 5px;
+            margin-right: 15px;
         }
 
         .list-title {
             font-weight: bold;
             font-size: 1rem;
-            margin-left: 15px;
         }
 
         .handyman-list-content {
@@ -304,7 +305,7 @@
 
     <header>
         <span class="header-title" onclick="resetMap()">EASYMECH</span>
-        <!-- New Location Icon (SVG) -->
+        <!-- Location Icon (SVG) -->
         <span class="location-icon" onclick="getUserLocation()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"/>
@@ -322,6 +323,7 @@
     <!-- Slide-Up Bottom Sheet -->
     <div class="handyman-sheet" id="sheet-container">
         <div class="sheet-header" onclick="toggleSheet()">
+            <!-- Handle removed from center to accommodate text better, but kept handle styling for visibility -->
             <div class="sheet-handle"></div>
             <span class="list-title" id="list-header-text">Handymen Near You (Tap to Expand)</span>
         </div>
@@ -585,19 +587,20 @@
                 let errorMsg;
                 switch (err.code) {
                     case err.PERMISSION_DENIED:
-                        errorMsg = "Location access denied. Please enable location permissions in your device settings.";
+                        // Specific instruction for denial on mobile
+                        errorMsg = "Location access denied. Please manually check your phone's app permissions for this site/browser to enable location services.";
                         break;
                     case err.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable.";
+                        errorMsg = "Location information is unavailable. Check your device's GPS signal.";
                         break;
                     case err.TIMEOUT:
-                        errorMsg = "Request to get user location timed out.";
+                        errorMsg = "Request to get user location timed out. Try again.";
                         break;
                     default:
-                        errorMsg = "An unknown error occurred while retrieving location.";
+                        errorMsg = `An unknown error occurred while retrieving location (Error Code: ${err.code}).`;
                         break;
                 }
-                showMessage(errorMsg, 6000);
+                showMessage(errorMsg, 8000);
             });
         }
         
@@ -607,12 +610,12 @@
             sheet.classList.toggle('expanded', isSheetExpanded);
             
             const headerText = document.getElementById('list-header-text');
+            const count = document.getElementById('list-container').children.length;
+
             if(isSheetExpanded) {
-                headerText.innerText = "Close List (Tap to Minimize)";
+                headerText.innerText = `Handymen Near You (${count} found) - Tap to Minimize`;
             } else {
-                // Restore original text but show total count
-                const count = document.getElementById('list-container').children.length;
-                headerText.innerText = `Handymen Near You (${count} found)`;
+                headerText.innerText = `Handymen Near You (${count} found) - Tap to Expand`;
             }
         }
     </script>

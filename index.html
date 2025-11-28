@@ -18,7 +18,7 @@
             --success: #28a745;
             --danger: #dc3545;
             --warning: #FFD700;
-            --info: #007bff; /* Added for message boxes */
+            --info: #007bff; 
         }
 
         body {
@@ -104,7 +104,7 @@
         #map {
             flex-grow: 1;
             align-self: center;
-            width: 100%; /* Use 100% width for full mobile screen */
+            width: 100%; 
             background: white;
             border-radius: 0; 
             position: relative; 
@@ -128,11 +128,14 @@
             transform: translateY(calc(100% - 70px)); 
             display: flex;
             flex-direction: column;
+            /* Ensure the sheet starts with a maximum height */
+            height: 90vh; 
         }
 
-        /* Expanded state: now only 80% of the viewport height (100vh - 80vh = 20vh remaining from top) */
+        /* Expanded state: set height to 80% and adjust transform */
         .handyman-sheet.expanded {
-            transform: translateY(calc(100vh - 80vh)); /* Moves the sheet up 80% */
+            height: 80vh; /* Set the exact expanded height */
+            transform: translateY(calc(100vh - 80vh)); /* Moves the sheet up to 80vh height */
         }
 
         .sheet-header {
@@ -143,6 +146,7 @@
             cursor: pointer;
             border-bottom: 1px solid #eee;
             touch-action: pan-y; 
+            flex-shrink: 0; /* Header doesn't shrink */
         }
 
         .sheet-handle {
@@ -161,6 +165,7 @@
         .handyman-list-content {
             padding: 15px;
             overflow-y: auto;
+            /* CRITICAL FIX: Flex-grow makes this element fill the remaining space of the 80vh sheet height */
             flex-grow: 1;
             -webkit-overflow-scrolling: touch; 
         }
@@ -275,10 +280,10 @@
         /* Custom Message Box (Replaces alert()) */
         #message-box {
             position: fixed;
-            top: 60px; /* Below header */
+            top: 60px; 
             left: 50%;
             transform: translateX(-50%) translateY(-100px); 
-            background: var(--info); /* Changed default color to info blue */
+            background: var(--info); 
             color: white;
             padding: 10px 20px;
             border-radius: 8px;
@@ -334,7 +339,6 @@
     <!-- Slide-Up Bottom Sheet -->
     <div class="handyman-sheet" id="sheet-container">
         <div class="sheet-header" onclick="toggleSheet()">
-            <!-- Handle kept for visual aesthetic -->
             <div class="sheet-handle"></div>
             <span class="list-title" id="list-header-text">Handymen Near You (Tap to Expand)</span>
         </div>
@@ -453,6 +457,8 @@
 
             if(data.length === 0) {
                 container.innerHTML = '<div style="text-align:center; padding:20px; color: var(--danger); font-weight:600;">No handymen found. Try checking a different service category.</div>';
+                // Add a placeholder to force the sheet to expand correctly even if the list is empty
+                container.innerHTML += '<div style="min-height: 100%;"></div>';
                 return;
             }
 
@@ -479,7 +485,7 @@
                 const isOpen = isShopOpen(item.open, item.close);
                 const badgeHtml = isOpen 
                     ? `<span class="badge badge-open">Open</span>` 
-                    : `<span class="badge badge-closed">Closed</span>`;
+                    : `<span class="badge badge-closed">Closed (Opens ${item.open}:00)</span>`;
                 
                 const distText = item.distance ? ` • <b>${item.distance.toFixed(1)} km</b>` : '';
 
@@ -493,11 +499,14 @@
                 `;
                 container.appendChild(card);
             });
+            
+            // Add a final spacer for consistency, though flex-grow should handle the height now
+            container.innerHTML += '<div style="height: 15px;"></div>';
         }
 
         // --- CATEGORIES & FILTERING ---
         function populateCategories() {
-            const types = [...new Set(allData.map(d => d.type))].filter(Boolean); // Filter out null/empty types
+            const types = [...new Set(allData.map(d => d.type))].filter(Boolean); 
             const grid = document.getElementById('cat-grid');
             grid.innerHTML = `<button class="btn-outline" onclick="filterData(null)">All Services</button>`;
             
@@ -558,7 +567,7 @@
             
             renderApp(allData);
             map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
-            if(isSheetExpanded) toggleSheet(); // Collapse the sheet if it's open
+            if(isSheetExpanded) toggleSheet(); 
         }
         
         // Custom message display function
@@ -566,7 +575,7 @@
             const msgBox = document.getElementById('message-box');
             clearTimeout(window.msgTimer); 
             
-            msgBox.className = `show ${type}`; // Apply type class
+            msgBox.className = `show ${type}`; 
             msgBox.innerText = text;
             
             window.msgTimer = setTimeout(() => {
@@ -584,57 +593,55 @@
             iconSvg.style.transition = 'transform 1s linear';
             iconSvg.style.transform = 'rotate(360deg)';
             
-            // Geolocation options for better performance/accuracy
-            const options = {
-                enableHighAccuracy: true,
-                timeout: 5000, // 5 seconds max wait
-                maximumAge: 0 // No cached position
-            };
-
             navigator.geolocation.getCurrentPosition(pos => {
                 // SUCCESS
                 userLat = pos.coords.latitude;
                 userLng = pos.coords.longitude;
-                iconSvg.style.transform = 'rotate(0deg)'; // Reset icon
+                iconSvg.style.transform = 'rotate(0deg)'; 
 
                 map.setView([userLat, userLng], 15);
 
+                // Use the precise latitude and longitude
                 if(userMarker) map.removeLayer(userMarker);
                 userMarker = L.circleMarker([userLat, userLng], {
                     color: '#2196F3', fillColor: '#2196F3', fillOpacity: 0.8, radius: 8, weight: 1
-                }).addTo(map).bindPopup("Your Location").openPopup();
+                }).addTo(map).bindPopup(`Your Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`).openPopup();
 
-                showMessage("Location found! Listing handymen near you.", 3000, 'success');
-                renderApp(allData); // Re-render to sort by distance
+                showMessage("Location found! Sorting handymen by distance.", 3000, 'success');
+                renderApp(allData); 
 
             }, (err) => {
                 // ERROR
-                iconSvg.style.transform = 'rotate(0deg)'; // Reset icon
+                iconSvg.style.transform = 'rotate(0deg)'; 
                 
                 let errorMsg;
                 switch (err.code) {
                     case err.PERMISSION_DENIED:
-                        // Crucial advice for mobile/iframe environments
-                        errorMsg = "Location access denied (Error 1). Please ensure you are viewing this page over HTTPS and manually check your device's browser permissions for this site to grant access.";
+                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. If on mobile, access must be over HTTPS.";
                         break;
                     case err.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable (Error 2). Check your device's GPS/network connection.";
+                        errorMsg = "Location information is unavailable. Check your device's GPS signal.";
                         break;
                     case err.TIMEOUT:
-                        errorMsg = "Request to get user location timed out (Error 3). Try moving to an open area and clicking again.";
+                        errorMsg = "Request to get user location timed out. Try again.";
                         break;
                     default:
-                        errorMsg = `An unknown error occurred while retrieving location (Error ${err.code}).`;
+                        errorMsg = `An unknown error occurred (Code: ${err.code}).`;
                         break;
                 }
                 showMessage(errorMsg, 8000, 'error');
-            }, options); // Pass options here
+            });
         }
         
         function toggleSheet() {
             const sheet = document.getElementById('sheet-container');
             isSheetExpanded = !isSheetExpanded;
             sheet.classList.toggle('expanded', isSheetExpanded);
+            
+            // Fix: Invalidate map size so Leaflet knows the viewport changed
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 400); // Should be slightly longer than CSS transition time
             
             const listHeaderText = document.getElementById('list-header-text');
             const count = document.getElementById('list-container').children.length;

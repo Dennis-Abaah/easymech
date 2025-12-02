@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>EASYMECH - Register</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handyman Profile</title>
     <style>
+        /* --- SHARED STYLES (Keep consistent with index) --- */
         :root {
             --primary: #000000;
             --secondary: #ffffff;
@@ -16,462 +17,208 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f9f9f9;
+            background-color: var(--secondary);
             color: var(--primary);
         }
 
         header {
-            background-color: white;
-            color: black;
-            padding: 15px 20px;
+            background-color: var(--primary);
+            color: var(--secondary);
+            padding: 15px;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            font-weight: 500;
+            font-size: 1.4rem;
+          
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .menu-icon {
-            font-size: 24px;
-            cursor: pointer;
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            margin-right: 15px;
             line-height: 1;
         }
 
-        .header-title {
-            font-weight: 500;
-            font-size: 1.4rem;
-        }
-
-        /* Side Nav */
-        .sidenav {
-            height: 100%;
-            width: 0;
-            position: fixed;
-            z-index: 2000;
-            top: 0;
-            left: 0;
-            background-color: #111;
-            overflow-x: hidden;
-            transition: 0.3s;
-            padding-top: 60px;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
-        }
-
-        .sidenav a {
-            padding: 8px 8px 8px 32px;
-            text-decoration: none;
-            font-size: 20px;
-            color: #818181;
-            display: block;
-            transition: 0.3s;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-
-        .sidenav a:hover {
-            color: #f1f1f1;
-            background: rgba(255,255,255,0.1);
-        }
-
-        .sidenav .closebtn {
-            position: absolute;
-            top: 0;
-            right: 25px;
-            font-size: 36px;
-            margin-left: 50px;
-        }
-
-        #menu-overlay {
-            position: fixed;
-            display: none;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 1999;
-        }
-
-        /* Form Container */
+        /* Profile Layout */
         .container {
             max-width: 600px;
-            margin: 20px auto;
+            margin: 0 auto;
             padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-
-        h2 {
             text-align: center;
-            margin-bottom: 25px;
         }
 
-        .form-group {
+        .profile-img {
+            width: 95%;
+            height: 250px;
+            border-radius: 5%;
+            object-fit: cover;
+            border: 1px solid var(--primary);
+            margin-bottom: 20px;
+            background: #eee;
+        }
+
+        h1 { margin: 0 0 5px 0; font-size: 2rem; }
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; color: #666; font-weight: normal; }
+
+        .status-box {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+        }
+        .open { background: var(--success); }
+        .closed { background: var(--danger); }
+
+        .details {
+            text-align: left;
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
             margin-bottom: 20px;
         }
 
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
+        .details h3 { margin-top: 0; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .details p { line-height: 1.5; color: #333; }
 
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            box-sizing: border-box; 
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-        
-        .row {
+        /* Action Buttons */
+        .actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
         }
 
-        .btn-submit {
-            width: 100%;
+        .action-btn {
+            display: block;
             padding: 15px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        
-        .btn-submit:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        .btn-location {
-            background: #eee;
-            color: #333;
-            padding: 10px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-        }
-
-        /* Image Preview Style */
-        #preview-container {
-            margin-top: 10px;
-            display: none;
             text-align: center;
-        }
-        #img-preview {
-            max-width: 100px;
-            max-height: 100px;
-            border-radius: 8px;
-            border: 2px solid #ddd;
-            object-fit: cover;
-        }
-
-        #status-msg {
-            margin-top: 15px;
-            text-align: center;
+            text-decoration: none;
             font-weight: bold;
-            padding: 10px;
             border-radius: 8px;
-            display: none;
+            text-transform: uppercase;
         }
-        .success { background: #d4edda; color: #155724; }
-        .error { background: #f8d7da; color: #721c24; }
-        .info { background: #cce5ff; color: #004085; }
 
+        .call { background: var(--primary); color: white; }
+        .whatsapp { background: #25D366; color: white; }
+
+        /* Spacer for fixed bottom buttons */
+        .spacer { height: 100px; }
+
+        #loading { margin-top: 50px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <!-- Nav -->
-    <div id="mySidenav" class="sidenav">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <a href="index.html" onclick="closeNav()">HOME</a>
-        <a href="register.html" onclick="closeNav()">REGISTER</a>
-    </div>
-    <div id="menu-overlay" onclick="closeNav()"></div>
-
     <header>
-        <div class="header-left">
-            <span class="menu-icon" onclick="openNav()">&#9776;</span>
-            <span class="header-title">Register</span>
-        </div>
+        <a href="index.html" class="back-btn">&#8592;</a>
+        Profile
     </header>
 
-    <div class="container">
-        <h2>Join as a Handyman</h2>
-        <form id="regForm">
-            
-            <div class="form-group">
-                <label>Full Name / Business Name</label>
-                <input type="text" name="name" required placeholder="e.g. John's Auto Repair">
-            </div>
-
-            <div class="form-group">
-                <label>Service Type</label>
-                <select name="type" required>
-                    <option value="">Select Service...</option>
-                    <option value="Mechanic">Mechanic</option>
-                    <option value="Electrician">Electrician</option>
-                    <option value="Plumber">Plumber</option>
-                    <option value="Carpenter">Carpenter</option>
-                    <option value="AC Repair">AC Repair</option>
-                    <option value="Electronics">Electronics</option> <!-- Changed from Vulcanizer -->
-                    <option value="Maison">Maison</option> <!-- Changed from Towing Service -->
-                    <option value="Painter">Painter</option>
-                    <option value="Welder">Welder</option> <!-- Added Welder -->
-                </select>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Opens At (24h)</label>
-                    <input type="number" name="open" min="0" max="23" placeholder="8">
-                </div>
-                <div class="form-group">
-                    <label>Closes At (24h)</label>
-                    <input type="number" name="close" min="0" max="23" placeholder="17">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Town</label>
-                    <input type="text" name="town" required placeholder="e.g. East Legon">
-                </div>
-                <div class="form-group">
-                    <label>Region</label>
-                    <select name="region" required>
-                        <option value="">Select Region...</option>
-                        <option value="Ahafo Region">Ahafo Region</option>
-                        <option value="Ashanti Region">Ashanti Region</option>
-                        <option value="Bono">Bono</option>
-                        <option value="Bono East">Bono East</option>
-                        <option value="Central Region">Central Region</option>
-                        <option value="Eastern Region">Eastern Region</option>
-                        <option value="Greater Accra">Greater Accra</option>
-                        <option value="North East">North East</option>
-                        <option value="Northern Region">Northern Region</option>
-                        <option value="Oti Region">Oti Region</option>
-                        <option value="Savannah Region">Savannah Region</option>
-                        <option value="Upper East">Upper East</option>
-                        <option value="Upper West">Upper West</option>
-                        <option value="Volta Region">Volta Region</option>
-                        <option value="Western Region">Western Region</option>
-                        <option value="Western North Region">Western North Region</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="form-group">
-                    <label>Phone Number</label>
-                    <input type="number" name="contact" required placeholder="23324xxxxxxx">
-                </div>
-                <div class="form-group">
-                    <label>WhatsApp Number</label>
-                    <input type="number" name="whatsapp" required placeholder="23324xxxxxxx">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Description (Services offered)</label>
-                <textarea name="desc" rows="3" required placeholder="Describe your services briefly..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>Profile Image (Upload from Device)</label>
-                <!-- Changed to file input -->
-                <input type="file" required id="fileInput" accept="image/*">
-                <div id="preview-container">
-                    <img id="img-preview" src="" alt="Preview">
-                    <div><small>Image ready</small></div>
-                </div>
-            </div>
-
-            <div class="form-group" style="background: #f0f0f0; padding: 15px; border-radius: 8px;">
-                <label>Location (Very Important)</label>
-                <button type="button" class="btn-location" onclick="getLocation()">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-                    Get My Current Location
-                </button>
-                <div class="row">
-                    <input type="text" required id="lat" name="lat" placeholder="Latitude" readonly required>
-                    <input type="text" required id="lng" name="lng" placeholder="Longitude" readonly required>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit" id="submitBtn">Register Now</button>
-            <div id="status-msg"></div>
-        </form>
+    <div class="container" id="content">
+        <div id="loading">Loading Profile...</div>
     </div>
 
+    <div class="actions" id="actions" style="display:none;"></div>
+    <div class="spacer"></div>
+
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzSK72YJAfZlN_7BmljJrbB1kBQ8hn2JA_sAW4ctnoG8MZ2R0d8VVs4nbdrVge_nH5-/exec';
-        
-        let processedImageData = null; // Stores the base64 string
+        const SHEET_ID = '1YRnpw6GJ8c2pZMYTofrYYLJBweWkR1qWvjmucI5_-k8';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-        // --- IMAGE HANDLING ---
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        window.onload = loadProfile;
 
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = function(event) {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = function() {
-                    // Resize logic (Max 800px width/height)
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const maxDim = 800;
-                    
-                    let width = img.width;
-                    let height = img.height;
+        async function loadProfile() {
+            // Get ID from URL
+            const params = new URLSearchParams(window.location.search);
+            const targetId = params.get('id');
 
-                    if (width > height) {
-                        if (width > maxDim) {
-                            height *= maxDim / width;
-                            width = maxDim;
-                        }
-                    } else {
-                        if (height > maxDim) {
-                            width *= maxDim / height;
-                            height = maxDim;
-                        }
-                    }
-
-                    canvas.width = width;
-                    canvas.height = height;
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Compress to JPEG 0.7 quality
-                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    
-                    // Show preview
-                    document.getElementById('img-preview').src = dataUrl;
-                    document.getElementById('preview-container').style.display = 'block';
-
-                    // Prepare data for upload (remove the "data:image/..." prefix)
-                    processedImageData = {
-                        base64: dataUrl.split(',')[1],
-                        mimeType: 'image/jpeg',
-                        fileName: 'profile_' + Date.now() + '.jpg'
-                    };
-                };
-            };
-        });
-
-        // --- NAVIGATION ---
-        function openNav() {
-            document.getElementById("mySidenav").style.width = "250px";
-            document.getElementById("menu-overlay").style.display = "block";
-        }
-
-        function closeNav() {
-            document.getElementById("mySidenav").style.width = "0";
-            document.getElementById("menu-overlay").style.display = "none";
-        }
-
-        // --- LOCATION ---
-        function getLocation() {
-            const btn = document.querySelector('.btn-location');
-            btn.innerHTML = 'Locating...';
-            
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(position => {
-                    document.getElementById('lat').value = position.coords.latitude.toFixed(6);
-                    document.getElementById('lng').value = position.coords.longitude.toFixed(6);
-                    btn.innerHTML = 'Location Set! &#10003;';
-                    btn.style.background = '#d4edda';
-                    btn.style.color = '#155724';
-                }, () => {
-                    alert("Error fetching location. Please enable GPS.");
-                    btn.innerHTML = 'Try Again';
-                });
-            } else {
-                alert("Geolocation is not supported by this browser.");
-            }
-        }
-
-        // --- FORM SUBMISSION ---
-        document.getElementById('regForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const msg = document.getElementById('status-msg');
-            
-            if(SCRIPT_URL.includes('PASTE_YOUR')) {
-                alert("Please configure the SCRIPT_URL in the code first!");
+            if(!targetId) {
+                document.getElementById('content').innerHTML = "No handyman selected.";
                 return;
             }
 
-            btn.disabled = true;
-            btn.innerText = "Uploading & Submitting...";
-            msg.innerText = "Please wait, uploading data...";
-            msg.className = "info";
-            msg.style.display = "block";
+            try {
+                const res = await fetch(SHEET_URL);
+                const txt = await res.text();
+                const json = JSON.parse(txt.substring(47).slice(0, -2));
+                
+                // Parse rows similar to index.html
+                const rows = json.table.rows.map(row => {
+                    const c = row.c;
+                    const v = (idx) => (c[idx] && c[idx].v) ? c[idx].v : null;
+                    return {
+                        name: v(0), image: v(1), type: v(2),
+                        open: v(3), close: v(4), region: v(5), town: v(6),
+                        contact: v(7), whatsapp: v(8), desc: v(9),
+                        lat: v(10), lng: v(11),
+                        id: btoa((v(0) || "") + (v(6) || "")).replace(/=/g, '')
+                    };
+                });
 
-            const formData = new FormData(this);
-            const data = {};
-            formData.forEach((value, key) => data[key] = value);
-            
-            // Add the processed image data if it exists
-            if (processedImageData) {
-                data.fileData = processedImageData.base64;
-                data.mimeType = processedImageData.mimeType;
-                data.fileName = processedImageData.fileName;
+                // Find match
+                const person = rows.find(r => r.id === targetId);
+
+                if(!person) {
+                    document.getElementById('content').innerHTML = "Handyman not found.";
+                    return;
+                }
+
+                renderProfile(person);
+
+            } catch(e) {
+                console.error(e);
+                document.getElementById('content').innerHTML = "Error loading data.";
             }
+        }
 
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                mode: 'no-cors', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(() => {
-                msg.innerText = "Registration Successful! Your details have been sent.";
-                msg.className = "success";
-                msg.style.display = "block";
-                btn.innerText = "Registered";
-                document.getElementById('regForm').reset();
-                document.getElementById('preview-container').style.display = 'none';
-                processedImageData = null;
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                msg.innerText = "Error submitting form. Please try again.";
-                msg.className = "error";
-                msg.style.display = "block";
-                btn.disabled = false;
-                btn.innerText = "Register Now";
-            });
-        });
+        function renderProfile(p) {
+            // Status Logic
+            const h = new Date().getHours();
+            const isOpen = (h >= (p.open || 8) && h < (p.close || 17));
+            const statusClass = isOpen ? 'open' : 'closed';
+            const statusText = isOpen ? `OPEN NOW (${p.open}:00 - ${p.close}:00)` : `CLOSED (Opens ${p.open}:00)`;
+
+            // Content
+            const html = `
+                <img src="${p.image || 'https://via.placeholder.com/150'}" class="profile-img" onerror="this.src='https://via.placeholder.com/150'">
+                <h1>${p.name}</h1>
+                <h2>${p.type} • ${p.town}</h2>
+                
+                <div class="status-box ${statusClass}">
+                    ${statusText}
+                </div>
+
+                <div class="details">
+                    <h3>About</h3>
+                    <p>${p.desc || "No description provided."}</p>
+                    <p><strong>Region:</strong> ${p.region}</p>
+                </div>
+            `;
+            document.getElementById('content').innerHTML = html;
+
+            // Buttons
+            const btnHtml = `
+                <a href="tel:${p.contact}" class="action-btn call">Call Now</a>
+                <a href="https://wa.me/${p.whatsapp}" class="action-btn whatsapp">WhatsApp</a>
+            `;
+            const actionDiv = document.getElementById('actions');
+            actionDiv.innerHTML = btnHtml;
+            actionDiv.style.display = 'grid';
+            
+            // Remove loading
+            const loader = document.getElementById('loading');
+            if(loader) loader.remove();
+        }
     </script>
 </body>
 </html>

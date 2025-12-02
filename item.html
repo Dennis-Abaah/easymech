@@ -159,7 +159,7 @@
                     return {
                         name: v(0), image: v(1), type: v(2),
                         open: v(3), close: v(4), region: v(5), town: v(6),
-                        Contact: v(7), Whatsapp: v(8), desc: v(9),
+                        contact: v(7), whatsapp: v(8), desc: v(9),
                         lat: v(10), lng: v(11),
                         id: btoa((v(0) || "") + (v(6) || "")).replace(/=/g, '')
                     };
@@ -208,8 +208,8 @@
 
             // Buttons
             const btnHtml = `
-                <a href="tel:${p.Contact}" class="action-btn call">Call Now</a>
-                <a href="https://wa.me/${p.Whatsapp}" class="action-btn whatsapp">WhatsApp</a>
+                <a href="tel:${p.contact}" class="action-btn call">Call Now</a>
+                <a href="https://wa.me/${p.whatsapp}" class="action-btn whatsapp">WhatsApp</a>
             `;
             const actionDiv = document.getElementById('actions');
             actionDiv.innerHTML = btnHtml;
@@ -222,4 +222,3 @@
     </script>
 </body>
 </html>
-

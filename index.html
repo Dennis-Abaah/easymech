@@ -45,6 +45,19 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Hamburger Menu Icon */
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
         .header-title {
             font-weight: 500;
             font-size: 1.4rem;
@@ -60,6 +73,60 @@
         }
         .location-icon:active {
             transform: scale(0.9);
+        }
+
+        /* --- SIDE NAVIGATION --- */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+        
+        /* Overlay when menu is open */
+        #menu-overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1999;
+            cursor: pointer;
         }
 
         /* Controls Bar */
@@ -101,8 +168,7 @@
             font-weight: 500;
             font-style: bold;
             height: 30px;
-            
-           }
+        }
 
         /* Map Area */
         #map {
@@ -348,8 +414,19 @@
     <div id="loading">Loading Handymen...</div>
     <div id="message-box"></div> <!-- Custom message box -->
 
+    <!-- Side Navigation -->
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="index.html" onclick="closeNav()">HOME</a>
+        <a href="register.html" onclick="closeNav()">REGISTER</a>
+    </div>
+    <div id="menu-overlay" onclick="closeNav()"></div>
+
     <header>
-        <span class="header-title" onclick="resetMap()">EASYMECH</span>
+        <div class="header-left">
+            <span class="menu-icon" onclick="openNav()">&#9776;</span>
+            <span class="header-title">EASYMECH</span>
+        </div>
         <!-- Location Icon (SVG) -->
         <span class="location-icon" onclick="getUserLocation()">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -415,6 +492,11 @@
         window.onload = function() {
             initMap();
             fetchData();
+            // --- UPDATED: Trigger Location automatically on load ---
+            // Small delay to ensure map is ready
+            setTimeout(() => {
+                getUserLocation();
+            }, 1000);
         };
 
         function initMap() {
@@ -637,9 +719,21 @@
             }, duration);
         }
 
+        // --- NAV FUNCTIONS ---
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("menu-overlay").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("menu-overlay").style.display = "none";
+        }
+
         function getUserLocation() {
             if(!navigator.geolocation) {
-                showMessage("Geolocation is not supported by this browser.", 5000, 'error');
+                // Do not spam error if it's the auto-load
+                // showMessage("Geolocation is not supported by this browser.", 5000, 'error');
                 return;
             }
             
@@ -671,22 +765,20 @@
                 let errorMsg;
                 switch (err.code) {
                     case err.PERMISSION_DENIED:
-                        // Added specific instruction for mobile access
-                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. NOTE: Access must be over HTTPS on most devices.";
+                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. NOTE: Access must be over HTTPS.";
                         break;
                     case err.POSITION_UNAVAILABLE:
-                        errorMsg = "Location information is unavailable. Check your device's GPS signal.";
+                        errorMsg = "Location unavailable. Check GPS.";
                         break;
                     case err.TIMEOUT:
-                        errorMsg = "Request to get user location timed out. Try again.";
+                        errorMsg = "Location request timed out.";
                         break;
                     default:
-                        errorMsg = `An unknown error occurred (Code: ${err.code}).`;
+                        errorMsg = "Error getting location.";
                         break;
                 }
-                showMessage(errorMsg, 8000, 'error');
+                showMessage(errorMsg, 5000, 'error');
             }, { 
-                // CRUCIAL FOR MOBILE ACCURACY AND RELIABILITY
                 enableHighAccuracy: true, 
                 timeout: 10000, 
                 maximumAge: 0 

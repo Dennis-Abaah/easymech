@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Ensure responsive behavior and prevent zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EASYMECH</title>
+    
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        /* --- CSS STYLES --- */
+        :root {
+            --primary: #000000;
+            --secondary: #ffffff;
+            --accent: #f0f0f0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #FFD700;
+            --info: #007bff; 
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--secondary);
+            color: var(--primary);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            color: black;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1001;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* Hamburger Menu Icon */
+        .menu-icon {
+            font-size: 24px;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .header-title {
+            font-weight: 500;
+            font-size: 1.4rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+        }
+
+        .location-icon {
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            transition: transform 0.2s;
+        }
+        .location-icon:active {
+            transform: scale(0.9);
+        }
+
+        /* --- SIDE NAVIGATION --- */
+        .sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            background-color: #111;
+            overflow-x: hidden;
+            transition: 0.3s;
+            padding-top: 60px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        }
+
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #818181;
+            display: block;
+            transition: 0.3s;
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+
+        .sidenav a:hover {
+            color: #f1f1f1;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+        
+        /* Overlay when menu is open */
+        #menu-overlay {
+            position: fixed;
+            display: none;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1999;
+            cursor: pointer;
+        }
+
+        /* Controls Bar */
+        .controls {
+            display: flex;
+            justify-content: center;
+            padding: 15px;
+            background:var(--secondary);
+            z-index: 1000;
+        }
+
+        .btn-filter {
+            width: 100%;   
+            padding: 12px;
+            background:var(--primary);
+            color: white;
+            border: none;
+            border-radius:10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+
+        .btn-filter:active {
+            transform: scale(0.98);
+        }
+        
+        .btn-outline {
+            background:rgb(241, 241, 241);
+            color: black;
+            border: 0px solid var(--primary);
+            border-radius: 10px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            font-style: bold;
+            height: 30px;
+        }
+
+        /* Map Area */
+        #map {
+            flex-grow: 1;
+            align-self: center;
+            width: 95%; 
+            background: white;
+            border-radius:10px; 
+            position: relative; 
+        }
+        
+        /* --- SLIDE-UP BOTTOM SHEET STYLES (Uber-like) --- */
+        .handyman-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 999;
+            background: var(--secondary);
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); 
+            max-height: 90vh; 
+            
+            /* Minimized state: shows only the top 70px */
+            transform: translateY(calc(100% - 70px)); 
+            display: flex;
+            flex-direction: column;
+            /* Ensure the sheet starts with a maximum height */
+            height: 90vh; 
+        }
+
+        /* Expanded state: set height to 80% and adjust transform */
+        .handyman-sheet.expanded {
+            height: 80vh; /* Set the exact expanded height */
+            transform: translateY(calc(100vh - 80vh)); /* Moves the sheet up to 80vh height */
+        }
+
+        .sheet-header {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            touch-action: pan-y; 
+            flex-shrink: 0; /* Header doesn't shrink */
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: #ccc;
+            border-radius: 5px;
+            margin-right: 15px;
+        }
+
+        .list-title {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .handyman-list-content {
+            padding: 15px;
+            overflow-y: auto;
+            /* CRITICAL: Flex-grow makes this element fill the remaining space of the 80vh sheet height */
+            flex-grow: 1;
+            -webkit-overflow-scrolling: touch; 
+        }
+        /* --- END SLIDE-UP STYLES --- */
+
+        /* Handyman Card */
+        .card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            /* Added padding-right to accommodate the Request button */
+            padding-right: 110px; 
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            border-radius: 12px; 
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: transform 0.2s;
+            position: relative; /* CRITICAL for positioning the button */
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-img {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px; 
+            object-fit: cover;
+            background: #eee;
+            margin-right: 15px;
+        }
+
+        .card-info {
+            flex: 1;
+        }
+
+        .card-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: white;
+            white-space: nowrap;
+        }
+        .badge-open { background-color: var(--success); }
+        .badge-closed { background-color: var(--danger); }
+
+        /* NEW: Request Button Style */
+        .request-btn {
+            position: absolute;
+            bottom: 15px; 
+            right: 15px; 
+            padding: 8px 15px;
+            background: var(--primary); /* Black color */
+            color: white;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            z-index: 10;
+            white-space: nowrap;
+        }
+        
+        .request-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal for Categories */
+         .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .cat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        /* Map Popup Styling */
+        .leaflet-popup-content-wrapper { border-radius: 8px; padding: 5px; }
+        .leaflet-popup-content { margin: 10px; text-align: center; }
+        .popup-btn {
+            display: block;
+            background:var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 8px 10px;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+        
+        /* Loading Spinner */
+        #loading {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-weight: bold; font-size: 1.2rem;
+            background: rgba(255,255,255,0.9); padding: 20px; border-radius: 10px;
+            z-index: 3000; box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+
+        /* Custom Message Box (Replaces alert()) */
+        #message-box {
+            position: fixed;
+            top: 60px; 
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px); 
+            background: var(--info); 
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            z-index: 3000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
+            max-width: 90%;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        #message-box.error {
+            background: var(--danger);
+        }
+        #message-box.warning {
+            background: var(--warning);
+            color: #333;
+        }
+
+
+        #message-box.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0); 
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="loading">Loading Handymen...</div>
+    <div id="message-box"></div> <!-- Custom message box -->
+
+    <!-- Side Navigation -->
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="index.html" onclick="closeNav()">HOME</a>
+        <a href="register.html" onclick="closeNav()">REGISTER</a>
+    </div>
+    <div id="menu-overlay" onclick="closeNav()"></div>
+
+    <header>
+        <div class="header-left">
+            <span class="menu-icon" onclick="openNav()">&#9776;</span>
+            <span class="header-title">EASYMECH</span>
+        </div>
+        <!-- Location Icon (SVG) -->
+        <span class="location-icon" onclick="getUserLocation()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <circle cx="12" cy="12" r="4"/>
+            </svg>
+        </span>
+    </header>
+
+    <div class="controls">
+        <button class="btn-filter" onclick="openModal()">All Services</button>
+    </div>
+
+    <div id="map"></div>
+
+    <!-- Slide-Up Bottom Sheet -->
+    <div class="handyman-sheet" id="sheet-container">
+        <div class="sheet-header" onclick="toggleSheet()">
+            <div class="sheet-handle"></div>
+            <span class="list-title" id="list-header-text">Handymen Near You (Tap to Expand)</span>
+        </div>
+        <div class="handyman-list-content" id="list-container">
+            <!-- Cards injected here -->
+        </div>
+    </div>
+
+    <!-- Category Modal -->
+    <div id="cat-modal" class="modal">
+        <div class="modal-content">
+            <h3>Select Service</h3>
+            <div class="cat-grid" id="cat-grid"></div>
+            <button class="btn-outline" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/esri-leaflet@3.0.10/dist/esri-leaflet.js"></script>
+    
+    <script>
+        // --- CONFIG ---
+        const SHEET_ID = '1YRnpw6GJ8c2pZMYTofrYYLJBweWkR1qWvjmucI5_-k8';
+        const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+        
+        // Default center: Accra, Ghana
+        const DEFAULT_CENTER = [5.6037, -0.1870]; 
+        const DEFAULT_ZOOM = 13;
+
+        let map;
+        let allData = [];
+        let markers = L.layerGroup();
+        let userLat = null;
+        let userLng = null;
+        let userMarker = null;
+        
+        // Map to store Leaflet marker instances by handyman ID
+        let markerMap = {}; 
+
+        // --- SHEET STATE ---
+        let isSheetExpanded = false;
+
+        // --- INIT ---
+        window.onload = function() {
+            initMap();
+            fetchData();
+            // --- UPDATED: Trigger Location automatically on load ---
+            // Small delay to ensure map is ready
+            setTimeout(() => {
+                getUserLocation();
+            }, 1000);
+        };
+
+        function initMap() {
+            map = L.map('map').setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+
+            // Esri Satellite
+            L.esri.basemapLayer('Imagery').addTo(map);
+            L.esri.basemapLayer('ImageryLabels').addTo(map);
+
+            markers.addTo(map);
+        }
+
+        // --- DATA FETCHING ---
+        async function fetchData() {
+            try {
+                const res = await fetch(SHEET_URL);
+                const txt = await res.text();
+                // Strip Google's callback wrapper
+                const jsonString = txt.substring(47).slice(0, -2);
+                const json = JSON.parse(jsonString);
+                
+                // Parse rows
+                allData = json.table.rows.map(row => {
+                    const c = row.c;
+                    const v = (idx) => (c[idx] && c[idx].v) ? c[idx].v : null;
+                    
+                    return {
+                        name: v(0),
+                        image: v(1),
+                        type: v(2),
+                        open: v(3) || 8,
+                        close: v(4) || 17,
+                        region: v(5),
+                        town: v(6),
+                        contact: v(7),
+                        whatsapp: v(8),
+                        desc: v(9),
+                        lat: v(10),
+                        lng: v(11),
+                        // Create unique ID for linking to item.html
+                        id: btoa((v(0) || "") + (v(6) || "")).replace(/=/g, '')
+                    };
+                }).filter(item => item.lat && item.lng);
+
+                document.getElementById('loading').style.display = 'none';
+                renderApp(allData);
+                populateCategories();
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loading').innerText = "Error loading data.";
+            }
+        }
+
+        // --- RENDERING ---
+        function renderApp(data) {
+            markers.clearLayers();
+            markerMap = {}; // Clear the map of markers
+            
+            const container = document.getElementById('list-container');
+            container.innerHTML = '';
+            
+            const listHeaderText = document.getElementById('list-header-text');
+            listHeaderText.innerText = `${data.length} Handymen Found (Tap to Expand)`;
+
+            // 1. Sort by distance if user location is known
+            if (userLat && userLng) {
+                data.forEach(item => {
+                    item.distance = getDistance(userLat, userLng, item.lat, item.lng);
+                });
+                data.sort((a, b) => a.distance - b.distance);
+                listHeaderText.innerText = `${data.length} Handymen Found (Sorted by Distance)`;
+            }
+
+            if(data.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:20px; color: var(--danger); font-weight:600;">No handymen found. Try checking a different service category.</div>';
+                // Add a placeholder to force the sheet to expand correctly even if the list is empty
+                container.innerHTML += '<div style="min-height: 100%;"></div>';
+                return;
+            }
+
+            data.forEach(item => {
+                // Add Marker
+                const marker = L.marker([item.lat, item.lng]).addTo(markers);
+                marker.bindPopup(`
+                    <b>${item.name}</b><br>
+                    <small>${item.type}</small><br>
+                    <!-- Leaflet popup content updated to match button style -->
+                    <a href="item.html?id=${item.id}" class="popup-btn">REQUEST SERVICE</a>
+                `);
+                
+                // Store marker reference in the map
+                markerMap[item.id] = marker; 
+
+                // Add List Card
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                // Card click handler: Focuses map and opens marker popup
+                card.onclick = (function(handymanId, itemLat, itemLng) {
+                    return (event) => {
+                        // Prevent map focusing if the Request button was clicked (it handles navigation)
+                        if (event.target.classList.contains('request-btn')) {
+                            return; 
+                        }
+                        
+                        const targetMarker = markerMap[handymanId];
+                        if (targetMarker) {
+                            // 1. Center map on marker using flyTo for smooth transition (0.5s)
+                            map.flyTo([itemLat, itemLng], 16, {duration: 0.5}); 
+                            // 2. Open the popup
+                            targetMarker.openPopup();
+                            // 3. Minimize sheet when focusing on a marker
+                            if(isSheetExpanded) toggleSheet();
+                        }
+                    };
+                })(item.id, item.lat, item.lng);
+
+
+                const isOpen = isShopOpen(item.open, item.close);
+                const badgeHtml = isOpen 
+                    ? `<span class="badge badge-open">Open</span>` 
+                    : `<span class="badge badge-closed">Closed (Opens ${item.open}:00)</span>`;
+                
+                const distText = item.distance ? ` • <b>${item.distance.toFixed(1)} km</b>` : '';
+
+                card.innerHTML = `
+                    <img src="${item.image || 'https://via.placeholder.com/60?text=HM'}" class="card-img" onerror="this.src='https://via.placeholder.com/60?text=HM'">
+                    <div class="card-info">
+                        <div class="card-name">${item.name}</div>
+                        <div class="card-meta">${item.type} • ${item.town}</div>
+                        <div class="card-meta">${badgeHtml} ${distText}</div>
+                    </div>
+                    <!-- NEW: Request button for direct navigation -->
+                    <a href="item.html?id=${item.id}" class="request-btn">Request</a>
+                `;
+                container.appendChild(card);
+            });
+            
+            // Add a final spacer for consistency
+            container.innerHTML += '<div style="height: 15px;"></div>';
+        }
+
+        // --- CATEGORIES & FILTERING ---
+        function populateCategories() {
+            const types = [...new Set(allData.map(d => d.type))].filter(Boolean); 
+            const grid = document.getElementById('cat-grid');
+            grid.innerHTML = `<button class="btn-outline" onclick="filterData(null)">All Services</button>`;
+            
+            types.forEach(type => {
+                grid.innerHTML += `<button class="btn-outline" onclick="filterData('${type}')">${type}</button>`;
+            });
+        }
+
+        function filterData(type) {
+            closeModal();
+            const filterButton = document.querySelector('.btn-filter');
+
+            if(!type) {
+                renderApp(allData);
+                filterButton.innerText = 'All Services';
+                map.setView(DEFAULT_CENTER, DEFAULT_ZOOM); 
+            } else {
+                const filtered = allData.filter(d => d.type === type);
+                renderApp(filtered);
+                filterButton.innerText = type;
+
+                if(filtered.length > 0) {
+                    const bounds = L.latLngBounds(filtered.map(d => [d.lat, d.lng]));
+                    map.fitBounds(bounds, {padding: [50, 50, 100, 50]}); 
+                } else {
+                    showMessage(`No ${type} services found in the current area.`, 4000, 'warning');
+                }
+            }
+        }
+
+        // --- UTILS ---
+        function isShopOpen(open, close) {
+            const h = new Date().getHours();
+            return h >= open && h < close;
+        }
+
+        // Haversine formula for distance (in km)
+        function getDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; 
+            const dLat = (lat2-lat1) * Math.PI/180;
+            const dLon = (lon2-lon1) * Math.PI/180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // --- INTERACTION ---
+        function openModal() { document.getElementById('cat-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('cat-modal').style.display = 'none'; }
+        
+        function resetMap() {
+            // Reset location, filter, and sheet state
+            userLat = null;
+            userLng = null;
+            if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
+            document.querySelector('.btn-filter').innerText = 'All Services';
+            
+            renderApp(allData);
+            map.setView(DEFAULT_CENTER, DEFAULT_ZOOM);
+            if(isSheetExpanded) toggleSheet(); 
+        }
+        
+        // Custom message display function
+        function showMessage(text, duration = 3000, type = 'info') {
+            const msgBox = document.getElementById('message-box');
+            clearTimeout(window.msgTimer); 
+            
+            msgBox.className = `show ${type}`; 
+            msgBox.innerText = text;
+            
+            window.msgTimer = setTimeout(() => {
+                msgBox.classList.remove('show');
+            }, duration);
+        }
+
+        // --- NAV FUNCTIONS ---
+        function openNav() {
+            document.getElementById("mySidenav").style.width = "250px";
+            document.getElementById("menu-overlay").style.display = "block";
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+            document.getElementById("menu-overlay").style.display = "none";
+        }
+
+        function getUserLocation() {
+            if(!navigator.geolocation) {
+                // Do not spam error if it's the auto-load
+                // showMessage("Geolocation is not supported by this browser.", 5000, 'error');
+                return;
+            }
+            
+            const iconSvg = document.querySelector('.location-icon svg');
+            iconSvg.style.transition = 'transform 1s linear';
+            iconSvg.style.transform = 'rotate(360deg)';
+            
+            navigator.geolocation.getCurrentPosition(pos => {
+                // SUCCESS
+                userLat = pos.coords.latitude;
+                userLng = pos.coords.longitude;
+                iconSvg.style.transform = 'rotate(0deg)'; 
+
+                map.setView([userLat, userLng], 15);
+
+                // Use the precise latitude and longitude
+                if(userMarker) map.removeLayer(userMarker);
+                userMarker = L.circleMarker([userLat, userLng], {
+                    color: '#2196F3', fillColor: '#2196F3', fillOpacity: 0.8, radius: 8, weight: 1
+                }).addTo(map).bindPopup(`Your Location: ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`).openPopup();
+
+                showMessage("Location found! Sorting handymen by distance.", 3000, 'success');
+                renderApp(allData); 
+
+            }, (err) => {
+                // ERROR
+                iconSvg.style.transform = 'rotate(0deg)'; 
+                
+                let errorMsg;
+                switch (err.code) {
+                    case err.PERMISSION_DENIED:
+                        errorMsg = "Location access denied. Please allow location permissions in your browser/device settings. NOTE: Access must be over HTTPS.";
+                        break;
+                    case err.POSITION_UNAVAILABLE:
+                        errorMsg = "Location unavailable. Check GPS.";
+                        break;
+                    case err.TIMEOUT:
+                        errorMsg = "Location request timed out.";
+                        break;
+                    default:
+                        errorMsg = "Error getting location.";
+                        break;
+                }
+                showMessage(errorMsg, 5000, 'error');
+            }, { 
+                enableHighAccuracy: true, 
+                timeout: 10000, 
+                maximumAge: 0 
+            });
+        }
+        
+        function toggleSheet() {
+            const sheet = document.getElementById('sheet-container');
+            isSheetExpanded = !isSheetExpanded;
+            sheet.classList.toggle('expanded', isSheetExpanded);
+            
+            // Fix: Invalidate map size so Leaflet knows the viewport changed
+            setTimeout(() => {
+                map.invalidateSize();
+            }, 400); // Should be slightly longer than CSS transition time
+            
+            const listHeaderText = document.getElementById('list-header-text');
+            const listContainer = document.getElementById('list-container');
+            // Get actual number of handyman cards (excluding placeholder/spacer)
+            const count = listContainer.children.length > 0 && listContainer.children[0].className === 'card' 
+                ? Array.from(listContainer.children).filter(c => c.className === 'card').length
+                : 0;
+
+            if(isSheetExpanded) {
+                listHeaderText.innerText = `Handymen Near You (${count} found) - Tap to Minimize`;
+            } else {
+                listHeaderText.innerText = `Handymen Near You (${count} found) - Tap to Expand`;
+            }
+        }
+    </script>
+</body>
+</html>

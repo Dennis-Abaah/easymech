@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EASYMECH - Ghana's Handyman Network</title>
+    <title>EASYMECH - Professional Service Network</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,12 +11,13 @@
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f9fafb; /* Gray-50 */
         }
         
         /* Animation utilities */
@@ -31,17 +32,17 @@
         }
 
         .pattern-grid {
-            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-image: radial-gradient(#d1d5db 1px, transparent 1px);
             background-size: 40px 40px;
         }
 
         /* Mockup Phone Styles */
         .mockup-phone {
-            border: 12px solid #0f172a; /* Slate 900 */
+            border: 12px solid #111827; /* Gray 900 */
             border-radius: 3rem;
             overflow: hidden;
             position: relative;
-            background: #cbd5e1;
+            background: #e5e7eb;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         .mockup-notch {
@@ -51,57 +52,57 @@
             transform: translateX(-50%);
             width: 40%;
             height: 25px;
-            background: #0f172a;
+            background: #111827;
             border-bottom-left-radius: 12px;
             border-bottom-right-radius: 12px;
             z-index: 20;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased">
+<body class="text-gray-900 antialiased">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 bg-slate-900/95 backdrop-blur-sm border-b border-slate-800 text-white transition-all duration-300">
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center gap-3">
-                    <div class="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center shadow-lg shadow-orange-900/50">
+                    <div class="w-10 h-10 bg-black rounded-xl flex items-center justify-center shadow-lg">
                         <i class="fas fa-wrench text-white text-lg"></i>
                     </div>
                     <div>
-                        <h1 class="text-2xl font-black tracking-wider text-white leading-none">EASY<span class="text-orange-500">MECH</span></h1>
-                        <span class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-medium block">Ghana</span>
+                        <h1 class="text-2xl font-black tracking-tighter text-gray-900 leading-none">EASY<span class="text-gray-500">MECH</span></h1>
+                        <span class="text-[10px] text-gray-400 uppercase tracking-[0.2em] font-bold block">Service Network</span>
                     </div>
                 </div>
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-slate-300 hover:text-white font-medium transition">Features</a>
-                    <a href="#how-it-works" class="text-slate-300 hover:text-white font-medium transition">How it Works</a>
-                    <a href="#register" class="text-slate-300 hover:text-white font-medium transition">For Handymen</a>
-                    <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-full font-bold shadow-lg shadow-orange-900/20 transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                    <a href="#features" class="text-gray-500 hover:text-black font-semibold text-sm transition">Features</a>
+                    <a href="#how-it-works" class="text-gray-500 hover:text-black font-semibold text-sm transition">How it Works</a>
+                    <a href="#register" class="text-gray-500 hover:text-black font-semibold text-sm transition">For Pros</a>
+                    <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-black hover:bg-gray-800 text-white px-6 py-2.5 rounded-full font-bold text-sm shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
                         <span>Launch App</span>
-                        <i class="fas fa-arrow-right text-sm"></i>
+                        <i class="fas fa-arrow-right text-xs"></i>
                     </a>
                 </div>
 
                 <!-- Mobile Menu Button -->
                 <div class="md:hidden">
-                    <button onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white p-2 focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
+                    <button onclick="toggleMobileMenu()" class="text-gray-900 p-2 focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
                     </button>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Menu Panel (Hidden by default) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-t border-slate-800 absolute w-full left-0 top-20 shadow-xl transition-all duration-300 ease-in-out">
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full left-0 top-20 shadow-xl transition-all duration-300 ease-in-out">
             <div class="px-6 py-8 space-y-6 flex flex-col">
-                <a href="#features" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white font-medium text-lg block border-b border-slate-800 pb-2">Features</a>
-                <a href="#how-it-works" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white font-medium text-lg block border-b border-slate-800 pb-2">How it Works</a>
-                <a href="#register" onclick="toggleMobileMenu()" class="text-slate-300 hover:text-white font-medium text-lg block border-b border-slate-800 pb-2">For Handymen</a>
-                <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-orange-600 hover:bg-orange-700 text-white px-6 py-4 rounded-xl font-bold text-center block shadow-lg shadow-orange-900/20 mt-4">
+                <a href="#features" onclick="toggleMobileMenu()" class="text-gray-600 hover:text-black font-bold text-lg block border-b border-gray-100 pb-2">Features</a>
+                <a href="#how-it-works" onclick="toggleMobileMenu()" class="text-gray-600 hover:text-black font-bold text-lg block border-b border-gray-100 pb-2">How it Works</a>
+                <a href="#register" onclick="toggleMobileMenu()" class="text-gray-600 hover:text-black font-bold text-lg block border-b border-gray-100 pb-2">For Pros</a>
+                <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-black hover:bg-gray-800 text-white px-6 py-4 rounded-xl font-bold text-center block shadow-lg mt-4">
                     Launch App <i class="fas fa-arrow-right text-sm ml-2"></i>
                 </a>
             </div>
@@ -109,108 +110,97 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-slate-900">
-        <!-- Abstract Background Elements -->
-        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0 opacity-20">
-            <div class="absolute -top-24 -left-24 w-96 h-96 bg-orange-600 rounded-full blur-3xl mix-blend-multiply filter"></div>
-            <div class="absolute top-1/2 right-0 w-80 h-80 bg-slate-700 rounded-full blur-3xl mix-blend-multiply filter"></div>
-        </div>
-
+    <header class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="lg:grid lg:grid-cols-12 lg:gap-16 items-center">
                 
                 <!-- Hero Text -->
                 <div class="lg:col-span-7 text-center lg:text-left mb-16 lg:mb-0">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700 text-orange-400 text-xs font-bold uppercase tracking-wide mb-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white border border-gray-200 text-gray-500 text-xs font-bold uppercase tracking-wide mb-6 shadow-sm">
                         <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                        Proudly Made in Ghana 🇬🇭
+                        Live in Accra, Ghana 🇬🇭
                     </div>
                     
-                    <h1 class="text-5xl lg:text-7xl font-black text-white leading-tight mb-6">
-                        Find Trusted <br>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">Mechanics</span> & <br>
-                        Handymen Nearby.
+                    <h1 class="text-5xl lg:text-7xl font-black text-gray-900 leading-[1.1] mb-6 tracking-tight">
+                        Expert Help. <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-600 to-black">On Demand.</span>
                     </h1>
                     
-                    <p class="text-lg text-slate-400 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
-                        Stranded on the road? Need a quick fix at home? EasyMech connects you instantly with verified local experts using real-time GPS location.
+                    <p class="text-lg text-gray-500 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed font-medium">
+                        Connect instantly with trusted local mechanics and handymen. View real-time locations, call or chat handymen directly no middlemen needed, and get moving again.
                     </p>
                     
                     <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                        <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-orange-900/30 transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                            <i class="fas fa-map-marker-alt"></i>
-                            Find Help Now
+                        <a href="https://dennis-abaah.github.io/easymech/map.html" class="bg-black hover:bg-gray-800 text-white px-8 py-4 rounded-xl font-bold text-lg shadow-xl shadow-gray-400/20 transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                            <i class="fas fa-search-location"></i>
+                            Find a Handyman
                         </a>
-                        <a href="#register" class="bg-slate-800 hover:bg-slate-700 text-white px-8 py-4 rounded-xl font-bold text-lg border border-slate-700 transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                            <i class="fas fa-hard-hat"></i>
-                            Join as Pro
+                        <a href="#register" class="bg-white hover:bg-gray-50 text-gray-900 px-8 py-4 rounded-xl font-bold text-lg border border-gray-200 shadow-sm transition transform hover:-translate-y-1 flex items-center justify-center gap-3">
+                            <i class="fas fa-briefcase"></i>
+                            Join as Handyman
                         </a>
                     </div>
 
-                    <div class="mt-10 flex items-center justify-center lg:justify-start gap-4 text-slate-500 text-sm font-medium">
-                        <div class="flex -space-x-2">
-                            <div class="w-8 h-8 rounded-full bg-slate-700 border-2 border-slate-900 flex items-center justify-center text-xs text-white">M</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-600 border-2 border-slate-900 flex items-center justify-center text-xs text-white">P</div>
-                            <div class="w-8 h-8 rounded-full bg-slate-500 border-2 border-slate-900 flex items-center justify-center text-xs text-white">E</div>
+                    <div class="mt-10 flex items-center justify-center lg:justify-start gap-4 text-gray-400 text-sm font-semibold">
+                        <div class="flex -space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center text-xs text-gray-600">A</div>
+                            <div class="w-10 h-10 rounded-full bg-gray-300 border-2 border-white flex items-center justify-center text-xs text-gray-600">B</div>
+                            <div class="w-10 h-10 rounded-full bg-gray-400 border-2 border-white flex items-center justify-center text-xs text-white">C</div>
                         </div>
-                        <p>Trusted by mechanics in Accra & beyond</p>
+                        <p>Trusted by 500+ handymen</p>
                     </div>
                 </div>
 
-                <!-- Hero Visual (CSS Mockup) -->
+                <!-- Hero Visual (CSS Mockup - Updated to Match Map App) -->
                 <div class="lg:col-span-5 relative">
                     <!-- Decor -->
-                    <div class="absolute -inset-4 bg-orange-500/20 blur-2xl rounded-full"></div>
+                    <div class="absolute -inset-4 bg-gradient-to-tr from-gray-200 to-white blur-3xl rounded-full opacity-50"></div>
                     
                     <!-- Phone Frame -->
                     <div class="mockup-phone w-full max-w-sm mx-auto aspect-[9/18] bg-white animate-float z-10">
                         <div class="mockup-notch"></div>
                         
-                        <!-- Screen Content (Simulating the App) -->
-                        <div class="h-full w-full flex flex-col relative overflow-hidden bg-slate-100">
-                            <!-- Map Background -->
-                            <div class="absolute inset-0 bg-slate-200 opacity-50 pattern-grid"></div>
+                        <!-- Screen Content -->
+                        <div class="h-full w-full flex flex-col relative overflow-hidden bg-white">
+                            <!-- Map Background (Grayscale) -->
+                            <div class="absolute inset-0 bg-gray-100 pattern-grid opacity-60"></div>
                             
-                            <!-- Header -->
-                            <div class="h-20 bg-slate-900 flex items-end p-4 pb-3 justify-between z-10">
-                                <div class="w-6 h-6 rounded bg-slate-700"></div>
-                                <div class="h-4 w-24 bg-slate-700 rounded"></div>
-                                <div class="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center text-white text-xs shadow-lg shadow-orange-500/50">
-                                    <i class="fas fa-location-arrow"></i>
+                            <!-- Floating Header -->
+                            <div class="absolute top-8 left-4 right-4 z-10 flex gap-2">
+                                <div class="w-10 h-10 bg-white rounded-full shadow-md"></div>
+                                <div class="flex-1 h-10 bg-white rounded-full shadow-md flex items-center px-3">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <div class="h-2 w-20 bg-gray-200 rounded"></div>
                                 </div>
                             </div>
 
-                            <!-- Pins (Simulated) -->
-                            <div class="absolute top-1/3 left-1/4 transform -translate-x-1/2">
-                                <div class="w-10 h-10 bg-slate-900 rounded-full border-2 border-white shadow-xl flex items-center justify-center text-orange-500 animate-bounce">
-                                    <i class="fas fa-wrench"></i>
+                            <!-- Black Pill Markers (Matching App) -->
+                            <div class="absolute top-1/3 left-1/3">
+                                <div class="bg-black text-white text-[10px] px-2 py-1 rounded-full shadow-lg font-bold flex items-center gap-1">
+                                    <i class="fas fa-wrench"></i> Mech
                                 </div>
-                            </div>
-                            
-                            <div class="absolute top-1/2 right-1/4 transform translate-x-1/2">
-                                <div class="w-8 h-8 bg-slate-900 rounded-full border-2 border-white shadow-lg flex items-center justify-center text-blue-400">
-                                    <i class="fas fa-tint"></i>
-                                </div>
+                                <div class="w-0 h-0 border-l-[4px] border-l-transparent border-t-[6px] border-t-black border-r-[4px] border-r-transparent mx-auto"></div>
                             </div>
 
-                            <div class="absolute bottom-1/3 left-1/2 transform -translate-x-1/2">
-                                <div class="w-32 bg-white p-2 rounded-lg shadow-xl text-center">
-                                    <div class="w-8 h-8 bg-slate-200 rounded-full mx-auto mb-1"></div>
-                                    <div class="h-2 w-16 bg-slate-200 rounded mx-auto"></div>
+                            <div class="absolute bottom-1/3 right-1/4">
+                                <div class="bg-black text-white text-[10px] px-2 py-1 rounded-full shadow-lg font-bold flex items-center gap-1">
+                                    <i class="fas fa-bolt"></i> Elec
                                 </div>
-                                <div class="w-0 h-0 border-l-[6px] border-l-transparent border-t-[8px] border-t-white border-r-[6px] border-r-transparent mx-auto"></div>
+                                <div class="w-0 h-0 border-l-[4px] border-l-transparent border-t-[6px] border-t-black border-r-[4px] border-r-transparent mx-auto"></div>
                             </div>
 
-                            <!-- Bottom Sheet -->
-                            <div class="absolute bottom-0 w-full bg-white h-32 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)] p-4">
-                                <div class="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-4"></div>
-                                <div class="flex gap-3">
-                                    <div class="w-12 h-12 rounded-lg bg-slate-200 flex-shrink-0"></div>
-                                    <div class="flex-1 space-y-2">
-                                        <div class="h-3 w-3/4 bg-slate-800 rounded"></div>
-                                        <div class="h-2 w-1/2 bg-slate-300 rounded"></div>
+                            <!-- Bottom Sheet (White, Rounded) -->
+                            <div class="absolute bottom-0 w-full bg-white h-40 rounded-t-3xl shadow-[0_-5px_20px_rgba(0,0,0,0.1)] p-5">
+                                <div class="w-12 h-1.5 bg-gray-200 rounded-full mx-auto mb-6"></div>
+                                <div class="flex gap-4 items-center mb-4">
+                                    <div class="w-14 h-14 rounded-xl bg-gray-100"></div>
+                                    <div class="flex-1">
+                                        <div class="h-4 w-32 bg-gray-900 rounded mb-2"></div>
+                                        <div class="h-3 w-20 bg-gray-300 rounded"></div>
                                     </div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-100"></div>
                                 </div>
+                                <div class="w-full h-10 bg-black rounded-xl"></div>
                             </div>
                         </div>
                     </div>
@@ -220,55 +210,55 @@
     </header>
 
     <!-- Services Grid -->
-    <section id="features" class="py-24 bg-white relative">
+    <section id="features" class="py-24 bg-white relative border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
-                <h2 class="text-orange-600 font-bold tracking-wide uppercase text-sm mb-3">Our Services</h2>
-                <h3 class="text-3xl md:text-4xl font-black text-slate-900 mb-6">Everything You Need to Get Moving Again</h3>
-                <p class="text-slate-600 text-lg">Whether it's a flat tire, a broken pipe, or faulty wiring, find the nearest expert in seconds.</p>
+                <h2 class="text-black font-bold tracking-wide uppercase text-xs mb-3">Categories</h2>
+                <h3 class="text-3xl md:text-4xl font-black text-gray-900 mb-6 tracking-tight">One App. All Services.</h3>
+                <p class="text-gray-500 text-lg">Whether it's a flat tire, a broken pipe, or faulty wiring, find the nearest expert in seconds.</p>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                 <!-- Service Card 1 -->
-                <div class="group p-6 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-orange-100 hover:shadow-xl hover:shadow-orange-900/5 transition duration-300">
-                    <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 text-2xl mb-4 group-hover:scale-110 transition">
+                <div class="group p-6 rounded-2xl bg-gray-50 hover:bg-white border border-gray-100 hover:border-black hover:shadow-xl transition duration-300">
+                    <div class="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-black text-xl mb-4 shadow-sm group-hover:bg-black group-hover:text-white transition">
                         <i class="fas fa-car-battery"></i>
                     </div>
-                    <h4 class="font-bold text-slate-900 text-lg mb-1">Mechanics</h4>
-                    <p class="text-sm text-slate-500">Auto repairs, engine checks, and roadside assistance.</p>
+                    <h4 class="font-bold text-gray-900 text-lg mb-1">Mechanics</h4>
+                    <p class="text-sm text-gray-500">Auto repairs & roadside assistance.</p>
                 </div>
 
                 <!-- Service Card 2 -->
-                <div class="group p-6 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-orange-100 hover:shadow-xl hover:shadow-orange-900/5 transition duration-300">
-                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 text-2xl mb-4 group-hover:scale-110 transition">
+                <div class="group p-6 rounded-2xl bg-gray-50 hover:bg-white border border-gray-100 hover:border-black hover:shadow-xl transition duration-300">
+                    <div class="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-black text-xl mb-4 shadow-sm group-hover:bg-black group-hover:text-white transition">
                         <i class="fas fa-bolt"></i>
                     </div>
-                    <h4 class="font-bold text-slate-900 text-lg mb-1">Electricians</h4>
-                    <p class="text-sm text-slate-500">Wiring, installations, and electrical fault repairs.</p>
+                    <h4 class="font-bold text-gray-900 text-lg mb-1">Electricians</h4>
+                    <p class="text-sm text-gray-500">Wiring & fault repairs.</p>
                 </div>
 
                 <!-- Service Card 3 -->
-                <div class="group p-6 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-orange-100 hover:shadow-xl hover:shadow-orange-900/5 transition duration-300">
-                    <div class="w-14 h-14 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 text-2xl mb-4 group-hover:scale-110 transition">
+                <div class="group p-6 rounded-2xl bg-gray-50 hover:bg-white border border-gray-100 hover:border-black hover:shadow-xl transition duration-300">
+                    <div class="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-black text-xl mb-4 shadow-sm group-hover:bg-black group-hover:text-white transition">
                         <i class="fas fa-faucet"></i>
                     </div>
-                    <h4 class="font-bold text-slate-900 text-lg mb-1">Plumbers</h4>
-                    <p class="text-sm text-slate-500">Leak repairs, pipe fitting, and drainage solutions.</p>
+                    <h4 class="font-bold text-gray-900 text-lg mb-1">Plumbers</h4>
+                    <p class="text-sm text-gray-500">Leak repairs & pipe fitting.</p>
                 </div>
 
                 <!-- Service Card 4 -->
-                <div class="group p-6 rounded-2xl bg-slate-50 hover:bg-white border border-slate-100 hover:border-orange-100 hover:shadow-xl hover:shadow-orange-900/5 transition duration-300">
-                    <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 text-2xl mb-4 group-hover:scale-110 transition">
+                <div class="group p-6 rounded-2xl bg-gray-50 hover:bg-white border border-gray-100 hover:border-black hover:shadow-xl transition duration-300">
+                    <div class="w-12 h-12 bg-white border border-gray-200 rounded-xl flex items-center justify-center text-black text-xl mb-4 shadow-sm group-hover:bg-black group-hover:text-white transition">
                         <i class="fas fa-snowflake"></i>
                     </div>
-                    <h4 class="font-bold text-slate-900 text-lg mb-1">AC Repair</h4>
-                    <p class="text-sm text-slate-500">Air conditioner servicing and installation.</p>
+                    <h4 class="font-bold text-gray-900 text-lg mb-1">AC Repair</h4>
+                    <p class="text-sm text-gray-500">Servicing & installation.</p>
                 </div>
             </div>
 
             <div class="mt-12 text-center">
-                <a href="https://dennis-abaah.github.io/easymech/map.html" class="inline-flex items-center gap-2 text-slate-900 font-bold hover:text-orange-600 transition underline decoration-2 underline-offset-4">
-                    See all categories
+                <a href="https://dennis-abaah.github.io/easymech/map.html" class="inline-flex items-center gap-2 text-gray-900 font-bold hover:text-gray-600 transition underline decoration-2 underline-offset-4">
+                    Explore all categories
                     <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
@@ -276,61 +266,59 @@
     </section>
 
     <!-- Map Feature Section -->
-    <section id="how-it-works" class="py-24 bg-slate-900 text-white overflow-hidden relative">
-        <!-- Background Map Image Overlay -->
-        <div class="absolute inset-0 opacity-10" style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/e/ec/Map_of_Accra.png'); background-size: cover; background-position: center; filter: grayscale(100%);"></div>
-        
+    <section id="how-it-works" class="py-24 bg-black text-white overflow-hidden relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="grid lg:grid-cols-2 gap-16 items-center">
                 <div>
-                    <h2 class="text-4xl font-black mb-6">Map-Based Discovery. <br>See who's around you.</h2>
-                    <p class="text-slate-400 text-lg mb-8 leading-relaxed">
-                        No more asking random strangers for directions to a mechanic. Open EasyMech, grant location access, and instantly see every registered handyman within a 5km radius.
+                    <h2 class="text-4xl font-black mb-6 tracking-tight">Visual Discovery. <br>See who's around.</h2>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed font-medium">
+                        No more asking strangers for directions. Open EasyMech, grant location access, and instantly see verified pros on a clean, interactive map.
                     </p>
                     
                     <div class="space-y-8">
                         <div class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-orange-600 flex items-center justify-center text-xl font-bold flex-shrink-0">1</div>
+                            <div class="w-10 h-10 rounded-full bg-white text-black flex items-center justify-center text-lg font-bold flex-shrink-0">1</div>
                             <div>
-                                <h4 class="text-xl font-bold mb-2">Locate</h4>
-                                <p class="text-slate-400 text-sm">Use the interactive map to pin-point service providers near your current GPS location.</p>
+                                <h4 class="text-xl font-bold mb-1">Locate</h4>
+                                <p class="text-gray-500 text-sm">Pin-point service providers near your current GPS location.</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-xl font-bold flex-shrink-0">2</div>
+                            <div class="w-10 h-10 rounded-full bg-gray-800 text-gray-400 flex items-center justify-center text-lg font-bold flex-shrink-0">2</div>
                             <div>
-                                <h4 class="text-xl font-bold mb-2">Compare</h4>
-                                <p class="text-slate-400 text-sm">View profiles, check working hours, and see photos of their workshops before you call.</p>
+                                <h4 class="text-xl font-bold mb-1">Compare</h4>
+                                <p class="text-gray-500 text-sm">View profiles, check working hours, and see photos.</p>
                             </div>
                         </div>
                         <div class="flex gap-4">
-                            <div class="w-12 h-12 rounded-full bg-slate-700 flex items-center justify-center text-xl font-bold flex-shrink-0">3</div>
+                            <div class="w-10 h-10 rounded-full bg-gray-800 text-gray-400 flex items-center justify-center text-lg font-bold flex-shrink-0">3</div>
                             <div>
-                                <h4 class="text-xl font-bold mb-2">Connect</h4>
-                                <p class="text-slate-400 text-sm">Call or WhatsApp them directly from the app. No middlemen.</p>
+                                <h4 class="text-xl font-bold mb-1">Connect</h4>
+                                <p class="text-gray-500 text-sm">Call or WhatsApp them directly. No middlemen.</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="relative">
-                    <div class="absolute inset-0 bg-gradient-to-r from-orange-600 to-purple-600 rounded-3xl transform rotate-3 blur-lg opacity-40"></div>
-                    <div class="bg-slate-800 border border-slate-700 rounded-3xl p-8 relative shadow-2xl">
+                    <div class="bg-gray-900 border border-gray-800 rounded-3xl p-8 relative shadow-2xl">
                         <div class="flex items-center justify-between mb-8">
-                            <h3 class="font-bold text-lg"><i class="fas fa-map-marked-alt text-orange-500 mr-2"></i> Live in Accra</h3>
-                            <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Online</span>
+                            <h3 class="font-bold text-lg text-white"><i class="fas fa-map text-gray-500 mr-2"></i> Live Map</h3>
+                            <span class="text-xs bg-green-900/30 text-green-400 px-2 py-1 rounded border border-green-900">Active</span>
                         </div>
                         <!-- Mock Map UI -->
-                        <div class="bg-slate-700 rounded-xl h-64 w-full relative overflow-hidden mb-6">
+                        <div class="bg-gray-800 rounded-xl h-64 w-full relative overflow-hidden mb-6 border border-gray-700">
+                            <!-- Grayscale Map Feel -->
+                            <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                            
                             <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                                <div class="w-4 h-4 bg-orange-500 rounded-full animate-ping absolute"></div>
-                                <div class="w-4 h-4 bg-orange-500 rounded-full border-2 border-white relative z-10"></div>
+                                <div class="w-4 h-4 bg-blue-500 rounded-full animate-ping absolute"></div>
+                                <div class="w-4 h-4 bg-blue-500 rounded-full border-2 border-white relative z-10"></div>
                             </div>
                             <!-- Static pins -->
-                            <i class="fas fa-map-marker-alt text-slate-400 absolute top-10 left-10 text-2xl"></i>
-                            <i class="fas fa-map-marker-alt text-slate-400 absolute bottom-10 right-20 text-2xl"></i>
-                            <i class="fas fa-map-marker-alt text-slate-400 absolute top-20 right-10 text-2xl"></i>
+                            <div class="absolute top-10 left-10 bg-black text-white text-[8px] px-2 py-1 rounded-full">Mech</div>
+                            <div class="absolute bottom-10 right-20 bg-black text-white text-[8px] px-2 py-1 rounded-full">Elec</div>
                         </div>
-                        <a href="https://dennis-abaah.github.io/easymech/map.html" class="block w-full bg-white text-slate-900 text-center font-bold py-3 rounded-xl hover:bg-slate-200 transition">
+                        <a href="https://dennis-abaah.github.io/easymech/map.html" class="block w-full bg-white text-black text-center font-bold py-3 rounded-xl hover:bg-gray-200 transition">
                             Open Map View
                         </a>
                     </div>
@@ -340,71 +328,67 @@
     </section>
 
     <!-- Call to Action / Register -->
-    <section id="register" class="py-24 bg-orange-50 relative overflow-hidden">
+    <section id="register" class="py-24 bg-gray-50 relative overflow-hidden border-t border-gray-900">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h2 class="text-3xl md:text-5xl font-black text-slate-900 mb-6">Are you a Skilled Handyman?</h2>
-            <p class="text-slate-600 text-lg mb-10 max-w-2xl mx-auto">
-                Join the EasyMech network today. Get listed on the map so customers in your area can find your shop easily. It's free and takes less than 2 minutes.
+            <h2 class="text-3xl md:text-5xl font-black text-gray-900 mb-6 tracking-tight">Are you a Skilled Pro?</h2>
+            <p class="text-gray-500 text-lg mb-10 max-w-2xl mx-auto font-medium">
+                Join the network today. Get listed on the map so customers in your area can find your shop easily. It's free and fast.
             </p>
-            <a href="https://dennis-abaah.github.io/easymech/map.html" class="inline-flex items-center gap-3 bg-slate-900 hover:bg-black text-white px-10 py-5 rounded-2xl font-bold text-xl shadow-2xl shadow-slate-900/20 transition transform hover:-translate-y-1">
+            <a href="https://dennis-abaah.github.io/easymech/map.html" class="inline-flex items-center gap-3 bg-black hover:bg-gray-800 text-white px-10 py-5 rounded-2xl font-bold text-xl shadow-xl transition transform hover:-translate-y-1">
                 <span>Register Your Shop</span>
                 <i class="fas fa-chevron-right"></i>
             </a>
-            <p class="mt-6 text-sm text-slate-500">
-                <i class="fas fa-check-circle text-green-500 mr-1"></i> No subscription fees
+            <p class="mt-6 text-sm text-gray-400 font-medium">
+                <i class="fas fa-check-circle text-black mr-1"></i> No fees
                 <span class="mx-2">•</span>
-                <i class="fas fa-check-circle text-green-500 mr-1"></i> Direct client contact
+                <i class="fas fa-check-circle text-black mr-1"></i> Direct client contact
             </p>
         </div>
-        
-        <!-- Decoration -->
-        <i class="fas fa-tools text-orange-200 text-9xl absolute -bottom-10 -left-10 transform rotate-12 opacity-50"></i>
-        <i class="fas fa-cog text-orange-200 text-9xl absolute -top-10 -right-10 transform -rotate-12 opacity-50"></i>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-400 py-12 border-t border-slate-900">
+    <footer class="bg-white text-gray-500 py-12 border-t border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid md:grid-cols-4 gap-8 mb-12">
                 <div class="col-span-1 md:col-span-2">
                     <div class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 bg-slate-800 rounded flex items-center justify-center">
-                            <i class="fas fa-wrench text-orange-600 text-sm"></i>
+                        <div class="w-8 h-8 bg-black rounded flex items-center justify-center">
+                            <i class="fas fa-wrench text-white text-xs"></i>
                         </div>
-                        <h2 class="text-xl font-black text-white tracking-wider">EASY<span class="text-orange-500">MECH</span></h2>
+                        <h2 class="text-xl font-black text-gray-900 tracking-tight">EASY<span class="text-gray-400">MECH</span></h2>
                     </div>
                     <p class="text-sm leading-relaxed max-w-xs mb-6">
-                        Bridging the gap between car owners, homeowners, and local skilled artisans in Ghana. Reliable help is just a click away.
+                        Bridging the gap between car owners and local skilled artisans in Ghana.
                     </p>
                     <div class="flex gap-4">
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="w-10 h-10 rounded-full bg-slate-900 flex items-center justify-center hover:bg-orange-600 hover:text-white transition"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-black hover:text-white transition"><i class="fab fa-instagram"></i></a>
                     </div>
                 </div>
                 
                 <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Platform</h4>
+                    <h4 class="text-gray-900 font-bold mb-4 uppercase text-xs tracking-wider">Platform</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><a href="https://dennis-abaah.github.io/easymech/map.html" class="hover:text-orange-500 transition">Launch Map</a></li>
-                        <li><a href="#features" class="hover:text-orange-500 transition">Services</a></li>
-                        <li><a href="#register" class="hover:text-orange-500 transition">For Mechanics</a></li>
+                        <li><a href="https://dennis-abaah.github.io/easymech/map.html" class="hover:text-black transition">Launch Map</a></li>
+                        <li><a href="#features" class="hover:text-black transition">Services</a></li>
+                        <li><a href="#register" class="hover:text-black transition">For Mechanics</a></li>
                     </ul>
                 </div>
 
                 <div>
-                    <h4 class="text-white font-bold mb-4 uppercase text-xs tracking-wider">Contact</h4>
+                    <h4 class="text-gray-900 font-bold mb-4 uppercase text-xs tracking-wider">Contact</h4>
                     <ul class="space-y-2 text-sm">
-                        <li><i class="fas fa-envelope mr-2 text-slate-600"></i> support@easymech.gh</li>
-                        <li><i class="fas fa-map-marker-alt mr-2 text-slate-600"></i> Accra, Ghana</li>
+                        <li><i class="fas fa-envelope mr-2 text-gray-400"></i> support@easymech.gh</li>
+                        <li><i class="fas fa-map-marker-alt mr-2 text-gray-400"></i> Accra, Ghana</li>
                     </ul>
                 </div>
             </div>
             
-            <div class="border-t border-slate-900 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-                <p>&copy; 2024 EasyMech Platform. All rights reserved.</p>
+            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs font-medium">
+                <p>&copy; 2024 EasyMech Platform.</p>
                 <p class="flex items-center gap-2">
-                    Built with <i class="fas fa-heart text-red-500"></i> in Ghana
+                    Made in Ghana
                 </p>
             </div>
         </div>

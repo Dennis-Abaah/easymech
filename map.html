@@ -134,7 +134,7 @@
             
             <!-- Handle Area -->
             <div class="h-8 flex-shrink-0 w-full flex items-center justify-center cursor-pointer" onclick="toggleSheet()">
-                <div class="w-12 h-1.5 bg-gray-300 rounded-full"></div>
+                <div class="w-12 h-1.5 bg-black rounded-full"></div>
             </div>
 
             <!-- Sheet Header -->
@@ -144,7 +144,7 @@
             </div>
 
             <!-- List Content -->
-            <div id="list-container" class="flex-grow overflow-y-auto p-4 pb-24 bg-gray-50">
+            <div id="list-container" class="flex-grow overflow-y-auto p-4  pb-24 bg-white">
                 <div class="flex flex-col items-center justify-center h-40 text-gray-400">
                     <i class="fas fa-spinner fa-spin text-2xl mb-3 text-black"></i>
                     <p class="text-sm font-medium">Finding nearby services...</p>
@@ -192,14 +192,9 @@
                     </div>
                     
                     <div class="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100">
+                       
                         <div class="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                            <i class="fas fa-star text-yellow-400"></i>
-                            <span>4.8</span>
-                            <span class="text-gray-400 font-normal">(124)</span>
-                        </div>
-                        <div class="w-px h-4 bg-gray-300"></div>
-                        <div class="flex items-center gap-1.5 text-sm font-medium text-gray-700">
-                            <i class="fas fa-map-marker-alt text-red-500"></i>
+                            <i class="fas fa-map-marker-alt text-black-500"></i>                            
                             <span id="profile-town">Location</span>
                         </div>
                     </div>
@@ -209,15 +204,15 @@
                 <div class="space-y-6">
                     
                     <!-- New Share Location Section -->
-                    <div class="p-5 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div class="p-5 bg-green-50 rounded-2xl border border-green-100">
                         <div class="flex items-start gap-4">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
                                 <i class="fas fa-location-arrow"></i>
                             </div>
                             <div class="flex-1">
                                 <h3 class="font-bold text-gray-900 text-base">Quick Request</h3>
                                 <p class="text-xs text-gray-600 mt-1 mb-3">Send your exact location map to this handyman for urgent service.</p>
-                                <button id="btn-share-loc" class="w-full bg-blue-600 text-white font-bold items-center text-sm py-3 rounded-xl shadow-md shadow-blue-200 hover:bg-blue-700 transition flex items-center justify-center gap-2">
+                                <button id="btn-share-loc" class="w-full bg-green-600 text-white font-bold items-center text-sm py-3 rounded-xl shadow-md shadow-green-200 hover:bg-green-700 transition flex items-center justify-center gap-2">
                                     <i class="fab fa-whatsapp text-lg"></i> Share Location on WhatsApp
                                 </button>
                             </div>
@@ -255,7 +250,7 @@
                                  <i class="fas fa-map-marked-alt text-4xl text-blue-200"></i>
                              </div>
                              <div class="absolute bottom-3 left-3 bg-white px-3 py-1.5 rounded-md shadow-sm text-xs font-bold text-gray-800">
-                                <i class="fas fa-location-dot text-red-500 mr-1"></i> <span id="profile-region">Region</span>
+                                <i class="fas fa-location-dot text-black-500 mr-1"></i> <span id="profile-region">Region</span>
                              </div>
                          </div>
                     </div>
@@ -669,7 +664,7 @@
                 const distText = item.distance ? `<span class="ml-2 text-xs font-bold text-gray-900 bg-gray-100 px-2 py-0.5 rounded-full">• ${item.distance.toFixed(1)} km</span>` : '';
 
                 const card = document.createElement('div');
-                card.className = "flex items-center gap-4 py-4 border-b border-gray-100 last:border-0 cursor-pointer hover:bg-white p-2 rounded-xl transition";
+                card.className = "flex items-center gap-4 py-4 border-b border-black-400 cursor-pointer hover:bg-white p-2 rounded-xl transition";
                 card.onclick = () => {
                     map.flyTo([item.lat, item.lng], 16);
                     marker.openPopup();
